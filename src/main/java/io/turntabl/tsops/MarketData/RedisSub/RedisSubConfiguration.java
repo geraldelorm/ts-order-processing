@@ -1,5 +1,6 @@
-package io.turntabl.tsops.RedisConfig;
+package io.turntabl.tsops.MarketData.RedisSub;
 
+import io.turntabl.tsops.MarketData.MarketDataSubscriber;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -11,7 +12,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 
 @Configuration
-public class RedisConfigurationConsumer {
+public class RedisSubConfiguration {
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
@@ -35,7 +36,7 @@ public class RedisConfigurationConsumer {
 
     @Bean
     public MessageListenerAdapter messageListenerAdapter() {
-        return new MessageListenerAdapter(new Subscriber());
+        return new MessageListenerAdapter(new MarketDataSubscriber());
     }
 
     @Bean
