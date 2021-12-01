@@ -59,7 +59,7 @@ public class AuthService {
         String token = jwtProvider.generateToken(authenticate);
 
         return AuthenticationResponse.builder()
-                .userid(getCurrentUser().getId())
+                .userId(getCurrentUser().getId())
                 .firstName(getCurrentUser().getFirstName())
                 .lastName(getCurrentUser().getLastName())
                 .email(getCurrentUser().getEmail())
