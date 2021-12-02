@@ -5,34 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import javax.persistence.*;
-import java.util.Date;
-
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "orders")
-public class Order {
+@Table(name = "product")
+public class Product {
+
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_id_exchange")
-    private String orderIdFromExchange;
+    @Column(name = "ticker")
+    private String ticker;
 
-    @Column(name ="created_at")
-    private Date created_At;
+    @Column(name = "quantity")
+    private Integer quantity;
 
-
-    @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "client_id", nullable = false)
-    private User user;
-
-
+    private Long portfolioId;
 
 }

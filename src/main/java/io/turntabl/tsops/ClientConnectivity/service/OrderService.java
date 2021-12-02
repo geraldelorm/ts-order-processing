@@ -32,10 +32,7 @@ public class OrderService {
     public void createOrder(OrderDto orderDto, Long userId){
         Order order = new Order();
         User user = userRepository.getById(userId);
-        order.setProduct(orderDto.getProduct());
-        order.setQuantity(orderDto.getQuantity());
-        order.setPrice(orderDto.getPrice());
-        order.setSide(orderDto.getSide());
+        order.setOrderIdFromExchange(orderDto.getOrderIdFromExchange());
         order.setUser(user);
         orderRepository.save(order);
     }
