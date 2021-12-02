@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AuthenticationResponse {
 
-    private Long userid;
+    private Long userId;
     private String firstName;
     private String lastName;
     private String email;

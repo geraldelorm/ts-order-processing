@@ -1,16 +1,18 @@
 package io.turntabl.tsops.ClientConnectivity.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "client")
 @Entity
 public class User {
     @Id
@@ -35,6 +37,14 @@ public class User {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Portfolio> portfolio;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Order> orders;
 
 
 }
