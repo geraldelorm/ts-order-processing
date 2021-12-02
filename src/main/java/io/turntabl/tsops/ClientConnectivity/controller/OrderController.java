@@ -29,6 +29,10 @@ public class OrderController {
 
     @PostMapping(path = "/{userId}")
     public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto, @PathVariable("userId") Long userId){
+        //validate order
+        //send orders to reporting service with order status
+        // if its valid
+        // process the order and send it to the exchange
         orderService.createOrder(orderDto, userId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
