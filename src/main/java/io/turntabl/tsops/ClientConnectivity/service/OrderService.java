@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class OrderService {
+    @Autowired
+    MarketDataService marketDataService;
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -46,11 +48,9 @@ public class OrderService {
         // do they have the asset they wish to sell
         // is the price and amount valid compared to marketData?
     }
-//    @Autowired
-//    MarketDataService marketDataService;
-//
-//    @PostConstruct
-//    public void printMarketData(){
-//        marketDataService.getMarketDataList();
-//    }
+
+    public void printMarketData(){
+        System.out.println(marketDataService.getListOfMarketDataFromExchangeOne());
+        System.out.println(marketDataService.getListOfMarketDataFromExchangeTwo());
+    }
 }
