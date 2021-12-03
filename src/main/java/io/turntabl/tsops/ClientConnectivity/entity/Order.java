@@ -21,6 +21,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "ticker")
+    private String ticker;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "price")
+    private Double price;
+
+    @Column(name = "side")
+    private String side ;
+
     @Column(name = "order_id_exchange")
     private String orderIdFromExchange;
 

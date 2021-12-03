@@ -36,13 +36,19 @@ public class OrderService {
 
     //create an order
     public void createOrder(OrderDto orderDto, Long userId){
+
+        //validate the order
+        //send order to reporting service and validate order
+        //save successful orders with the id from the exchange
+
         Order order = new Order();
         User user = userRepository.getById(userId);
         order.setOrderIdFromExchange(orderDto.getOrderIdFromExchange());
         order.setUser(user);
         orderRepository.save(order);
-        //send order to reporting service and validate order
+        
 //        validateOrder(orderDto);
+
     }
 
     //validate an order
@@ -55,7 +61,10 @@ public class OrderService {
         // for sell side - send other to the exchange with highest price
         // for buy side - send other to the exchange with lowest price
         // is the price and amount valid compared to marketData?
+        //get the order id from the exchange and save it in the db
+
         sendOrderToExchange(orderDto);
+
     }
 
     public void sendOrderToExchange(OrderDto orderDto){
