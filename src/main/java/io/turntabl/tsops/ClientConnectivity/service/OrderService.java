@@ -32,11 +32,10 @@ public class OrderService {
 
     //create an order
     public void createOrder(OrderDto orderDto, Long userId){
-        Order order = new Order();
-        User user = userRepository.getById(userId);
-        order.setOrderIdFromExchange(orderDto.getOrderIdFromExchange());
-        order.setUser(user);
-        orderRepository.save(order);
+        //validate the order
+        //save successful orders with the id from the exchange
+
+
     }
 
     //validate an order
@@ -45,6 +44,7 @@ public class OrderService {
         // do they have enough balance to buy or
         // do they have the asset they wish to sell
         // is the price and amount valid compared to marketData?
+        //get the order id from the exchange and save it in the db
     }
 //    @Autowired
 //    MarketDataService marketDataService;

@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderDto {
 
-    private String orderIdFromExchange;
+    private String ticker;
+    private Integer quantity;
+    private Double price;
+    private String side ;
+
 
 }

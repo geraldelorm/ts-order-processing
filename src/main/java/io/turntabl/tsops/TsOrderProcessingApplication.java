@@ -9,8 +9,6 @@ public class TsOrderProcessingApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TsOrderProcessingApplication.class, args);
-
-
 	}
 
 }
