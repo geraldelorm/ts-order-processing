@@ -46,11 +46,11 @@ public class OrderService {
         // do they have the asset they wish to sell
         // is the price and amount valid compared to marketData?
     }
-    @Autowired
-    MarketDataService marketDataService;
-
-    @PostConstruct
-    public void printMarketData(){
-        marketDataService.getMarketDataList();
-    }
+//    @Autowired
+//    MarketDataService marketDataService;
+//
+//    @PostConstruct
+//    public void printMarketData(){
+//        marketDataService.getMarketDataList();
+//    }
 }

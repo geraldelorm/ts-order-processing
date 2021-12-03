@@ -12,25 +12,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MarketDataService implements MessageListener {
+public class MarketDataService {
 
     Logger logger =  LoggerFactory.getLogger(MarketDataService.class);
 
-    List<MarketData> marketDataList;
-
-    @SneakyThrows
-    @Override
-    public void onMessage(Message message,  byte[] pattern) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String body = new String(message.getBody());
-
-        marketDataList = objectMapper.readValue(body, List.class);
-//        logger.info("Consumed Message {}", Arrays.asList(marketData));
-
+    public void marketDataFromExOne(String message){
+        logger.info("Consumed Message From EX 1 {}", message);
     }
 
-    public List<MarketData> getMarketDataList() {
-        return marketDataList;
+    public void marketDataFromExTwo(String message){
+        logger.info("Consumed Message From EX 2 {}", message);
     }
+
+//    ObjectMapper objectMapper = new ObjectMapper();
+//    String body = new String(message.getBody());
+//
+//    marketDataList = objectMapper.readValue(body, List.class);
+////        logger.info("Consumed Message {}", Arrays.asList(marketData));
 }
-
