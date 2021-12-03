@@ -43,7 +43,6 @@ public class OrderService {
         //send order to reporting service
         //and send order to exchange
 
-
     }
 
     //validate an order
