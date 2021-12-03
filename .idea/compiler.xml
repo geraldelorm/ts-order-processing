@@ -16,7 +16,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ts-mds" target="1.8" />
+      <module name="ts-mds" target="9" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,12 +36,14 @@ public class User {
     @Column(name = "user_role")
     private String userRole;
 
+    @Column(name = "account")
+    private Double account;
+
     @Column(name = "created_at")
     private Date createdAt;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Portfolio> portfolio;
+    private List<Portfolio> portfolio = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
