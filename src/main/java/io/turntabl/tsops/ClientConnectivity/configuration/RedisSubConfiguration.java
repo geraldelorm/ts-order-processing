@@ -36,14 +36,6 @@ public class RedisSubConfiguration {
         return new ChannelTopic("marketDataFromExTwo");
     }
 
-//    @Bean
-//    public RedisTemplate redisTemplate() {
-//        RedisTemplate<String, Product> template = new RedisTemplate<>();
-//        template.setConnectionFactory(jedisConnectionFactory());
-//        template.setDefaultSerializer(new Jackson2JsonRedisSerializer<Product>(Product.class));
-//        return template;
-//    }
-
     @Bean("marketDataFromExOneListenerAdapter")
     MessageListenerAdapter marketDataFromExOneListenerAdapter() {
         return new MessageListenerAdapter(new MarketDataService(),"marketDataFromExOne");

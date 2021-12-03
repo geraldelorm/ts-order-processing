@@ -1,7 +1,9 @@
 package io.turntabl.tsops.ClientConnectivity.controller;
 
+import io.turntabl.tsops.ClientConnectivity.dto.MarketData;
 import io.turntabl.tsops.ClientConnectivity.dto.OrderDto;
 import io.turntabl.tsops.ClientConnectivity.entity.Order;
+import io.turntabl.tsops.ClientConnectivity.service.MarketDataService;
 import io.turntabl.tsops.ClientConnectivity.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,5 +37,11 @@ public class OrderController {
         // process the order and send it to the exchange
         orderService.createOrder(orderDto, userId);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/test")
+    public MarketData test(){
+        return orderService.marketDataForAProductOnExOne("IBM");
     }
 }

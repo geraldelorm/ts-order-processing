@@ -39,7 +39,6 @@ public class Order {
     @Column(name ="created_at")
     private Date created_At;
 
-
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "client_id", nullable = false)

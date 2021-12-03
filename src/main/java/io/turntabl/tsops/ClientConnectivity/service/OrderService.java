@@ -1,5 +1,7 @@
 package io.turntabl.tsops.ClientConnectivity.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.turntabl.tsops.ClientConnectivity.dto.MarketData;
 import io.turntabl.tsops.ClientConnectivity.dto.OrderDto;
 import io.turntabl.tsops.ClientConnectivity.entity.Order;
 import io.turntabl.tsops.ClientConnectivity.entity.User;
@@ -15,6 +17,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class OrderService {
+    @Autowired
+    MarketDataService marketDataService;
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -32,25 +36,55 @@ public class OrderService {
 
     //create an order
     public void createOrder(OrderDto orderDto, Long userId){
+
         //validate the order
+        //send order to reporting service and validate order
         //save successful orders with the id from the exchange
 
+        Order order = new Order();
+        User user = userRepository.getById(userId);
+        order.setOrderIdFromExchange(orderDto.getOrderIdFromExchange());
+        order.setUser(user);
+        orderRepository.save(order);
+        
+//        validateOrder(orderDto);
 
     }
 
     //validate an order
-    public void validateOrder(OrderDto orderDto, Long userId){
-        // check if user exists
+    public void validateOrder(OrderDto orderDto){
+
         // do they have enough balance to buy or
         // do they have the asset they wish to sell
+
+        // get marketData fro product on both exchanges
+        // for sell side - send other to the exchange with highest price
+        // for buy side - send other to the exchange with lowest price
         // is the price and amount valid compared to marketData?
         //get the order id from the exchange and save it in the db
+
+        sendOrderToExchange(orderDto);
+
     }
-//    @Autowired
-//    MarketDataService marketDataService;
-//
-//    @PostConstruct
-//    public void printMarketData(){
-//        marketDataService.getMarketDataList();
-//    }
+
+    public void sendOrderToExchange(OrderDto orderDto){
+
+    }
+
+    public void trackOrderStatus(String orderId){
+
+    }
+
+
+    public MarketData marketDataForAProductOnExOne(String productTicker) {
+        return MarketDataService.listOfMarketDataFromExchangeOne.stream()
+                .filter(marketData -> marketData.getTicker().equals(productTicker))
+                .findFirst().get();
+    }
+    public MarketData marketDataForAProductOnExTwo(String productTicker) {
+        return MarketDataService.listOfMarketDataFromExchangeTwo.stream()
+                .filter(marketData -> marketData.getTicker().equals(productTicker))
+                .findFirst().get();
+    }
+
 }
