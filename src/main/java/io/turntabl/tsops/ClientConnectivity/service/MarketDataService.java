@@ -8,37 +8,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.fasterxml.jackson.databind.cfg.CoercionInputShape.Array;
 
 @Service
 public class MarketDataService {
 
     Logger logger =  LoggerFactory.getLogger(MarketDataService.class);
 
-    private ArrayList listOfMarketDataFromExchangeOne;
-    private ArrayList listOfMarketDataFromExchangeTwo;
+    public static List<MarketData> listOfMarketDataFromExchangeOne = new ArrayList<>();
+    public static List<MarketData> listOfMarketDataFromExchangeTwo = new ArrayList<>();
 
     ObjectMapper objectMapper = new ObjectMapper();
 
     public void marketDataFromExOne(String message) throws JsonProcessingException {
-        listOfMarketDataFromExchangeOne = objectMapper.readValue(message, ArrayList.class);
-        System.out.println(listOfMarketDataFromExchangeOne);
+        MarketData[] md =  objectMapper.readValue(message, MarketData[].class);
+        listOfMarketDataFromExchangeOne = Arrays.asList(md);
 
-//        logger.info("Consumed Message From EX 1 {}", listOfMarketDataFromExchangeOne);
+        logger.info("Consumed Message From EX 1 {}", listOfMarketDataFromExchangeOne);
     }
 
     public void marketDataFromExTwo(String message) throws JsonProcessingException {
-        listOfMarketDataFromExchangeTwo = objectMapper.readValue(message, ArrayList.class);
-        System.out.println(listOfMarketDataFromExchangeTwo);
+        MarketData[] md =  objectMapper.readValue(message, MarketData[].class);
+        listOfMarketDataFromExchangeTwo = Arrays.asList(md);
 
-//        logger.info("Consumed Message From EX 1 {}", listOfMarketDataFromExchangeTwo);
-    }
-
-    public ArrayList getListOfMarketDataFromExchangeOne(){
-        return listOfMarketDataFromExchangeOne;
-    }
-
-    public ArrayList getListOfMarketDataFromExchangeTwo(){
-        return listOfMarketDataFromExchangeTwo;
+        logger.info("Consumed Message From EX 2 {}", listOfMarketDataFromExchangeTwo);
     }
 }
