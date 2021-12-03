@@ -51,6 +51,6 @@ public class OrderService {
 
     @PostConstruct
     public void printMarketData(){
-        marketDataService.getMarketData();
+        marketDataService.getMarketDataList();
     }
 }

@@ -1,6 +1,6 @@
 package io.turntabl.tsops.ClientConnectivity.configuration;
 
-import io.turntabl.tsops.ClientConnectivity.dto.Product;
+import io.turntabl.tsops.ClientConnectivity.dto.MarketData;
 import io.turntabl.tsops.ClientConnectivity.service.MarketDataService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +29,9 @@ public class RedisSubConfiguration {
 
     @Bean
     public RedisTemplate redisTemplate() {
-        RedisTemplate<String, Product> template = new RedisTemplate<>();
+        RedisTemplate<String, MarketData> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
-        template.setDefaultSerializer(new Jackson2JsonRedisSerializer<Product>(Product.class));
+        template.setDefaultSerializer(new Jackson2JsonRedisSerializer<MarketData>(MarketData.class));
         return template;
     }
 
