@@ -36,6 +36,9 @@ public class Order {
     @Column(name = "order_id_exchange")
     private String orderIdFromExchange;
 
+    @Column(name = "status")
+    private String status;
+
     @Column(name ="created_at")
     private Date created_At;
 

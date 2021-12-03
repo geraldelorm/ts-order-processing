@@ -14,5 +14,4 @@ public class OrderDto {
     private Double price;
     private String side ;
 
-
 }
