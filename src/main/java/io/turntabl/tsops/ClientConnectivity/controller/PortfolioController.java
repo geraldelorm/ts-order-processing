@@ -4,7 +4,6 @@ import io.turntabl.tsops.ClientConnectivity.dto.PortfolioDto;
 import io.turntabl.tsops.ClientConnectivity.entity.Portfolio;
 import io.turntabl.tsops.ClientConnectivity.service.PortfolioService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -4,6 +4,8 @@ import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.MarketData;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
+import io.turntabl.tsops.OrderProcessing.service.ExchangeConnectivity;
+import io.turntabl.tsops.OrderProcessing.service.MarketDataService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
