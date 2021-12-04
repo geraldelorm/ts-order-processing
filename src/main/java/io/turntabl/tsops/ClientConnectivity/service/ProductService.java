@@ -42,16 +42,11 @@ public class ProductService {
     //create a product - when you succ buy a product implement logic to be assigned to a user
     public void createProduct(ProductDto productDto, Long portfolioId){
         Product product = new Product();
-        System.out.println(product.getId());
-
         Portfolio portfolio = portfolioRepository.getById(portfolioId);
-//        product.setId(productDto.getId());
         product.setTicker(productDto.getTicker());
         product.setQuantity(productDto.getQuantity());
         product.setPortfolioId(portfolioId);
         portfolio.addProduct(product);
-        System.out.println(product);
         productRepository.save(product);
-
     }
 }
