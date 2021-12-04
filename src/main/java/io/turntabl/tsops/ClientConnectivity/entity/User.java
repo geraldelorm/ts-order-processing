@@ -37,8 +37,8 @@ public class User {
     @Column(name = "user_role")
     private String userRole;
 
-    @Column(name = "account")
-    private Double account;
+    @Column(name = "account_balance")
+    private Double account_balance;
 
     @Column(name = "created_at")
     private Date createdAt;
