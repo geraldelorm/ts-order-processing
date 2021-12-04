@@ -1,6 +1,6 @@
-package io.turntabl.tsops.ClientConnectivity.configuration;
+package io.turntabl.tsops.OrderProcessing.configuration;
 
-import io.turntabl.tsops.ClientConnectivity.service.MarketDataService;
+import io.turntabl.tsops.OrderProcessing.service.MarketDataService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

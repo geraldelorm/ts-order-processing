@@ -1,13 +1,13 @@
-package io.turntabl.tsops.ClientConnectivity.entity;
+package io.turntabl.tsops.OrderProcessing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.turntabl.tsops.ClientConnectivity.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
-import java.util.Date;
 
 
 @Entity
@@ -40,7 +40,8 @@ public class Order {
     private String status;
 
     @Column(name ="created_at")
-    private Date created_At;
+    @Temporal(TemporalType.TIMESTAMP) // set automatically
+    private java.util.Date created_At;
 
     @ManyToOne
     @JsonIgnore
