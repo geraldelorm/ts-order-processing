@@ -1,7 +1,7 @@
-package io.turntabl.tsops.ClientConnectivity.repository;
+package io.turntabl.tsops.OrderProcessing.repository;
 
 
-import io.turntabl.tsops.ClientConnectivity.entity.Order;
+import io.turntabl.tsops.OrderProcessing.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

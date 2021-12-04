@@ -1,10 +1,8 @@
-package io.turntabl.tsops.ClientConnectivity.controller;
+package io.turntabl.tsops.OrderProcessing.controller;
 
-import io.turntabl.tsops.ClientConnectivity.dto.MarketData;
-import io.turntabl.tsops.ClientConnectivity.dto.OrderDto;
-import io.turntabl.tsops.ClientConnectivity.entity.Order;
-import io.turntabl.tsops.ClientConnectivity.service.MarketDataService;
-import io.turntabl.tsops.ClientConnectivity.service.OrderService;
+import io.turntabl.tsops.OrderProcessing.entity.Order;
+import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
+import io.turntabl.tsops.OrderProcessing.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

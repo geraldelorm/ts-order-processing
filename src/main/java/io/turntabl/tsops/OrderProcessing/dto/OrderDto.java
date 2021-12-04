@@ -1,4 +1,4 @@
-package io.turntabl.tsops.ClientConnectivity.dto;
+package io.turntabl.tsops.OrderProcessing.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

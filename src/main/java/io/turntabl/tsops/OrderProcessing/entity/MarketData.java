@@ -1,4 +1,4 @@
-package io.turntabl.tsops.ClientConnectivity.dto;
+package io.turntabl.tsops.OrderProcessing.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
