@@ -40,8 +40,8 @@ public class OrderController {
     }
 
 
-    @GetMapping("/test")
-    public MarketData test(){
-        return orderService.marketDataForAProductOnExOne("IBM");
-    }
+//    @GetMapping("/test")
+//    public MarketData test(){
+//        return orderService.marketDataForAProductOnExOne("IBM");
+//    }
 }
