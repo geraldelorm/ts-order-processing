@@ -1,7 +1,8 @@
-package io.turntabl.tsops.ClientConnectivity.service;
+package io.turntabl.tsops.ClientConnectivity;
 
 import io.turntabl.tsops.ClientConnectivity.entity.Product;
 import io.turntabl.tsops.ClientConnectivity.repository.ProductRepository;
+import io.turntabl.tsops.ClientConnectivity.service.ProductService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
