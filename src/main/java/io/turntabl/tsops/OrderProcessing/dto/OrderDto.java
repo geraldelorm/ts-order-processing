@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderDto {
 
-    private String ticker;
+    private String product;
     private Integer quantity;
     private Double price;
     private String side ;

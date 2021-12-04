@@ -21,8 +21,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ticker")
-    private String ticker;
+    @Column(name = "product")
+    private String product;
 
     @Column(name = "quantity")
     private Integer quantity;

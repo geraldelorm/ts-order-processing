@@ -17,12 +17,14 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+
     @Autowired
     MarketDataService marketDataService;
     @Autowired
     RestTemplate restTemplate;
+
     @Autowired
-    OrderCreationService orderCreationService;
+    OrderValidationService orderValidationService;
 
     //get all orders
     public List<Order> getAllOrder() {
@@ -37,7 +39,24 @@ public class OrderService {
 
     //create an order
     public void createOrder(OrderDto orderDto, Long userId) {
-        orderCreationService.createOrder(orderDto, userId);
+        //get the order
+        //save the order with user id
+        //validate the order
+        //send order to reporting service
+        //and send order to exchange
+
+        Order order = new Order();
+        order.setProduct(orderDto.getProduct());
+        order.setQuantity(orderDto.getQuantity());
+        order.setPrice(orderDto.getPrice());
+        order.setSide(orderDto.getSide());
+//        order.setCreated_At(); add time stamp
+        order.setStatus("CREATED");
+        order.setUser(userRepository.getById(userId));
+        orderRepository.save(order);
+        System.out.println(orderDto);
+
+        orderValidationService.validateOrder(orderDto, order);
     }
 
 

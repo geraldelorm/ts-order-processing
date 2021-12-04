@@ -1,6 +1,5 @@
 package io.turntabl.tsops.OrderProcessing.service;
 
-import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.MarketData;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
@@ -15,7 +14,7 @@ public class OrderValidationService {
 
     private final OrderRepository orderRepository;
     @Autowired
-    SendOrderToExchange sendOrderToExchange;
+    ExchangeConnectivity exchangeConnectivity;
 
     //validate an order
     public void validateOrder(OrderDto orderDto, Order order) {
@@ -23,7 +22,7 @@ public class OrderValidationService {
 
         order.setStatus("VALIDATED");
         orderRepository.save(order);
-        sendOrderToExchange.sendOrderToExchangeOne(orderDto, order);
+        exchangeConnectivity.sendOrderToExchangeOne(orderDto, order);
 
         // do they have enough balance to buy or
         // do they have the asset they wish to sell
