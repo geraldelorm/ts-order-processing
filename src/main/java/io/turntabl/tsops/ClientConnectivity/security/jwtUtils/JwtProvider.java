@@ -61,7 +61,7 @@ public class JwtProvider {
         try {
             return (PrivateKey) keyStore.getKey("springblog", "secret".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new AuthException("Exception occured while retrieving public key from keystore", e);
+            throw new AuthException("Exception occurred while retrieving public key from keystore", e);
         }
     }
 
@@ -74,7 +74,7 @@ public class JwtProvider {
         try {
             return keyStore.getCertificate("springblog").getPublicKey();
         } catch (KeyStoreException e) {
-            throw new AuthException("Exception occured while " +
+            throw new AuthException("Exception occurred while " +
                     "retrieving public key from keystore", e);
         }
     }

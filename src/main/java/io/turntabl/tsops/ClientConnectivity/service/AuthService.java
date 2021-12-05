@@ -39,7 +39,7 @@ public class AuthService {
             user.setLastName(registerRequest.getLastName());
             user.setEmail(registerRequest.getEmail());
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            user.setCreatedAt(new Date());
+            //user.setCreatedAt(new Date());
             user.setUserRole(registerRequest.getUserRole());
             userRepository.save(user);
     }
