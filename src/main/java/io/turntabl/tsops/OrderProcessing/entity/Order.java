@@ -5,9 +5,13 @@ import io.turntabl.tsops.ClientConnectivity.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.jetbrains.annotations.NotNull;
 
 
 import javax.persistence.*;
+import java.util.Date;
 
 
 @Entity
@@ -39,9 +43,15 @@ public class Order {
     @Column(name = "status")
     private String status;
 
-    @Column(name ="created_at")
-    @Temporal(TemporalType.TIMESTAMP) // set automatically
-    private java.util.Date created_At;
+    @Column(name = "created_at")
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
     @ManyToOne
     @JsonIgnore

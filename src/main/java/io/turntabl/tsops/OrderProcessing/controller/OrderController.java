@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/auth/order")
+@RequestMapping("/api/v1/order")
 @AllArgsConstructor
 public class OrderController {
 
@@ -27,7 +27,7 @@ public class OrderController {
         return orderService.getUserOrder(userId);
     }
 
-    @PostMapping(path = "/{userId}")
+    @PostMapping(path = "create/{userId}")
     public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto, @PathVariable("userId") Long userId){
         //validate order
         //send orders to reporting service with order status

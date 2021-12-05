@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/v1/auth/product")
+@RequestMapping("/api/v1/product")
 @AllArgsConstructor
 public class ProductController {
 
@@ -33,7 +33,7 @@ public class ProductController {
         return productService.getProductsFromPortfolio(productId);
     }
 
-    @PostMapping(path = "/{portfolioId}")
+    @PostMapping(path = "create/{portfolioId}")
     public ResponseEntity<Void> createProduct(@RequestBody ProductDto productDto, @PathVariable("portfolioId")Long portfolioId ){
         productService.createProduct(productDto,portfolioId);
         return new ResponseEntity<>(HttpStatus.CREATED);

@@ -32,7 +32,6 @@ public class PortfolioService {
     //create a portfolio
     public void createPortfolio(PortfolioDto portfolioDto, Long userId){
         Portfolio portfolio = new Portfolio();
-        System.out.println(portfolio);
         User user = userRepository.getById(userId);
         portfolio.setName(portfolioDto.getName());
         portfolio.setDescription(portfolioDto.getDescription());
