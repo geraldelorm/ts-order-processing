@@ -26,35 +26,24 @@ public class OrderService {
     @Autowired
     OrderValidationService orderValidationService;
 
-    //get all orders
     public List<Order> getAllOrder() {
         return orderRepository.findAll();
     }
 
-    //get one user's order
     public List<Order> getUserOrder(Long userId) {
         User user = userRepository.getById(userId);
         return user.getOrders();
     }
 
-    //create an order
     public void createOrder(OrderDto orderDto, Long userId) {
-        //get the order
-        //save the order with user id
-        //validate the order
-        //send order to reporting service
-        //and send order to exchange
-
         Order order = new Order();
         order.setProduct(orderDto.getProduct());
         order.setQuantity(orderDto.getQuantity());
         order.setPrice(orderDto.getPrice());
         order.setSide(orderDto.getSide());
-//        order.setCreated_At(); add time stamp
         order.setStatus("CREATED");
         order.setUser(userRepository.getById(userId));
         orderRepository.save(order);
-        System.out.println(orderDto);
 
         orderValidationService.validateOrder(orderDto, order);
     }

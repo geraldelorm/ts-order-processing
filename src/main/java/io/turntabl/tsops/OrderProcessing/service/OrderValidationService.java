@@ -18,13 +18,8 @@ public class OrderValidationService {
     @Autowired
     ExchangeConnectivity exchangeConnectivity;
 
-    //validate an order
     public void validateOrder(OrderDto orderDto, Order order) {
-
-
-        order.setStatus("VALIDATED");
-        orderRepository.save(order);
-        exchangeConnectivity.sendOrderToExchangeOne(orderDto, order);
+        //TODO - VALIDATE ORDER PER THE FOLLOWING
 
         // do they have enough balance to buy or
         // do they have the asset they wish to sell
@@ -33,16 +28,11 @@ public class OrderValidationService {
         // for buy side - send other to the exchange with lowest price
         // is the price and amount valid compared to marketData?
 
+        //FOR VALID ORDERS
+        order.setStatus("VALIDATED");
+        orderRepository.save(order);
 
-        // if order is valid send it to the exchange
-//        sendOrderToExchangeOne(orderDto, order);
-//        //if valid
-//        order.setStatus("VALID");
-//        //if not valid
-//        order.setStatus("FAILED");
-////        orderRepository.save(order); //update orderStatus in DB
-//        // send update to reporting service
-
+        exchangeConnectivity.sendOrderToExchangeOne(orderDto, order);
     }
 
     public MarketData marketDataForAProductOnExOne(String productTicker) {
