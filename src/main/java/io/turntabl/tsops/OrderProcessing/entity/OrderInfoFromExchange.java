@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderInfo {
+public class OrderInfoFromExchange {
 
     @JsonProperty("product")
     private String product;

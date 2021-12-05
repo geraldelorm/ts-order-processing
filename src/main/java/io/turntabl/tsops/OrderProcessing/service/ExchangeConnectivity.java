@@ -2,9 +2,10 @@ package io.turntabl.tsops.OrderProcessing.service;
 
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
-import io.turntabl.tsops.OrderProcessing.entity.OrderInfo;
+import io.turntabl.tsops.OrderProcessing.entity.OrderInfoFromExchange;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ExchangeConnectivity {
 
     private final OrderRepository orderRepository;
@@ -40,84 +40,37 @@ public class ExchangeConnectivity {
         orderJsonObject.put("price", orderDto.getPrice());
         orderJsonObject.put("side", orderDto.getSide());
 
-        HttpEntity<String> request = new HttpEntity<String>(orderJsonObject.toString(), headers);
-
+        HttpEntity<String> request = new HttpEntity<>(orderJsonObject.toString(), headers);
         String orderIDFromExchange = restTemplate.postForObject(orderUrlFroExOne, request, String.class);
 
-        System.out.println(orderIDFromExchange);
         order.setOrderIdFromExchange(orderIDFromExchange);
-        order.setStatus("PENDING ON EXCHANGE");
+        order.setStatus("SENT TO EXCHANGE");
         orderRepository.save(order);
 
+        //TODO //Send order details to reporting service for tracking
         checkOrderStatusOnExchangeOne(orderIDFromExchange, order);
-
-        //will get the id from the exchange
-        //get the order id from the exchange and save it in the db
-//        order.setIDFromexchange
-        //update status to sent to exchange
-        //update the users portfolio with product and quantity
     }
+
     public void checkOrderStatusOnExchangeOne(String orderIdFromEx, Order order){
-        String orderID = orderIdFromEx. replaceAll("^\"+|\"+$", "");
-        System.out.println(orderID);
+        String orderID = orderIdFromEx.replaceAll("^\"+|\"+$", "");
 
-        while (order.getStatus() != "EXECUTED"){
-            System.out.println(order.getStatus());
+        while (!order.getStatus().equals("EXECUTED")){
+            log.info("Order Status: " + order.getStatus());
             String orderStatusUrlFroExOne = "https://exchange.matraining.com/" + ExchangeKey + "/order/" + orderID ;
-            System.out.println(orderStatusUrlFroExOne);
 
-            OrderInfo orderInfoFromExchange = restTemplate.getForObject(orderStatusUrlFroExOne, OrderInfo.class);
-
-            System.out.println(orderInfoFromExchange);
+            OrderInfoFromExchange orderInfoFromExchange = restTemplate.getForObject(orderStatusUrlFroExOne, OrderInfoFromExchange.class);
+            log.info("Order Info From Exchange: " + orderInfoFromExchange);
 
             int cumulativeQuantity = orderInfoFromExchange.getCumulativeQuantity();
             int quantity = orderInfoFromExchange.getQuantity();
-            System.out.println(cumulativeQuantity + " , " + quantity);
+
             if (cumulativeQuantity == quantity){
-                System.out.println("EXECUTED");
-                order.setStatus("EXECUTED");
+                order.setStatus("FULLY EXECUTED");
+                orderRepository.save(order);
+            } else if (cumulativeQuantity > 0){
+                order.setStatus("PARTLY EXECUTED");
                 orderRepository.save(order);
             }
         }
     }
-
-//    public void sendOrderToExchangeTwo(OrderDto orderDto, Order order) {
-//        String orderUrlFroExOne = "https://exchange2.matraining.com/" +"457a1e4f-09ac-4421-9259-fe4d9a999577" + "/order";
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        JSONObject orderJsonObject = new JSONObject();
-//        orderJsonObject.put("product", orderDto.getTicker());
-//        orderJsonObject.put("quantity", orderDto.getQuantity());
-//        orderJsonObject.put("price", orderDto.getPrice());
-//        orderJsonObject.put("side", orderDto.getSide());
-//
-//        HttpEntity<String> request = new HttpEntity<String>(orderJsonObject.toString(), headers);
-//
-//        String orderIDFromExchange = restTemplate.postForObject(orderUrlFroExOne, request, String.class);
-//
-//        System.out.println(orderIDFromExchange);
-//        order.setOrderIdFromExchange(orderIDFromExchange);
-//        order.setStatus("PENDING ON EXCHANGE");
-//        orderRepository.save(order);
-
-//        checkOrderStatusOnExchangeTwo(orderIDFromExchange, order);
-
-        //will get the id from the exchange
-        //get the order id from the exchange and save it in the db
-//        order.setIDFromexchange
-        //update status to sent to exchange
-        //update the users portfolio with product and quantity
-//    }
-
-
-//    public void checkOrderStatusOnExchangeTwo(String orderIdFromEx, Order order){
-//        String orderUrlFroExOne = "https://exchange2.matraining.com/" + ExchangeKey + "/order/" + orderIdFromEx ;
-//
-//        Object orderFromExchange = restTemplate.getForObject(orderUrlFroExOne, String.class);
-//
-//        System.out.println(orderFromExchange);
-//    }
-
 }

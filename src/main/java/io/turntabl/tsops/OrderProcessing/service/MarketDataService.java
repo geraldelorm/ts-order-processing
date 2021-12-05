@@ -23,13 +23,13 @@ public class MarketDataService {
         MarketData[] md = objectMapper.readValue(message, MarketData[].class);
         listOfMarketDataFromExchangeOne = Arrays.asList(md);
 
-        logger.info("Consumed Message From EX 1 {}", listOfMarketDataFromExchangeOne);
+        logger.info("Consumed Message From Exchange 1 {}", listOfMarketDataFromExchangeOne);
     }
 
     public void marketDataFromExTwo(String message) throws JsonProcessingException {
         MarketData[] md = objectMapper.readValue(message, MarketData[].class);
         listOfMarketDataFromExchangeTwo = Arrays.asList(md);
 
-        logger.info("Consumed Message From EX 2 {}", listOfMarketDataFromExchangeTwo);
+        logger.info("Consumed Message From Exchange 2 {}", listOfMarketDataFromExchangeTwo);
     }
 }
