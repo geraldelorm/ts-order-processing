@@ -22,15 +22,15 @@ public class OrderController {
         return orderService.getAllOrder();
     }
 
-    @GetMapping(path = "/{userId}")
-    public List<Order> getUserOrder(@PathVariable("userId")Long userId){
-        return orderService.getUserOrder(userId);
+    @GetMapping(path = "/user")
+    public List<Order> getUserOrder(){
+        return orderService.getUserOrder();
     }
 
-    @PostMapping(path = "create/{userId}")
-    public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto, @PathVariable("userId") Long userId){
+    @PostMapping(path = "/create")
+    public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto){
 
-        orderService.createOrder(orderDto, userId);
+        orderService.createOrder(orderDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

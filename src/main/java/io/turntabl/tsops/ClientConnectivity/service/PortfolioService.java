@@ -9,6 +9,7 @@ import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +18,7 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     //get all portfolios
     public List<Portfolio> getAllPortfolio(){
@@ -24,15 +26,22 @@ public class PortfolioService {
     }
 
     //get one user's portfolio
-    public List<Portfolio> getUserPortfolio(Long userId){
-        User user = userRepository.getById(userId);
-        return user.getPortfolio();
+    public List<Portfolio> getUserPortfolio(){
+        User user = authService.getCurrentUser();
+        if(user.getUserRole().equals("client")){
+            return user.getPortfolio();
+        }
+        else {
+            List<Portfolio> portfolios = new ArrayList<>();
+            return portfolios;
+        }
+
     }
 
     //create a portfolio
-    public void createPortfolio(PortfolioDto portfolioDto, Long userId){
+    public void createPortfolio(PortfolioDto portfolioDto){
         Portfolio portfolio = new Portfolio();
-        User user = userRepository.getById(userId);
+        User user = authService.getCurrentUser();
         portfolio.setName(portfolioDto.getName());
         portfolio.setDescription(portfolioDto.getDescription());
         portfolio.setUser(user);
