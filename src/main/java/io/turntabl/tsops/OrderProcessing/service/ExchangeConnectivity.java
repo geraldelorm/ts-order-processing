@@ -36,7 +36,7 @@ public class ExchangeConnectivity {
         } else {
             exchangeUrl = "https://exchange2.matraining.com/";
         }
-        String orderUrlFroExOne = exchangeUrl + ExchangeKey + "/order";
+        String orderSubmissionUrl = exchangeUrl + ExchangeKey + "/order";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -50,7 +50,7 @@ public class ExchangeConnectivity {
         HttpEntity<String> request = new HttpEntity<>(orderJsonObject.toString(), headers);
 
         try {
-            String orderIDFromExchange = restTemplate.postForObject(orderUrlFroExOne, request, String.class);
+            String orderIDFromExchange = restTemplate.postForObject(orderSubmissionUrl, request, String.class);
             order.setOrderIdFromExchange(orderIDFromExchange);
             order.setStatus("SENT");
             orderRepository.save(order);

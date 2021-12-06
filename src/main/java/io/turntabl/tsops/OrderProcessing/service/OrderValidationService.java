@@ -44,6 +44,11 @@ public class OrderValidationService {
             order.setStatus("INVALID");
             log.info("Oder: " + orderDto + " quantity is above sell limit");
             orderRepository.save(order);
+        } else if (orderDto.getPrice() < 0 || orderDto.getPrice() > (mdForProductOnExOne.getLastTradedPrice() + mdForProductOnExOne.getMaxPriceShift()) ||
+                orderDto.getPrice() < (mdForProductOnExOne.getLastTradedPrice() - mdForProductOnExOne.getMaxPriceShift())) {
+            order.setStatus("INVALID");
+            log.info("Oder: " + orderDto + " Price is unreasonable");
+            orderRepository.save(order);
         } else {
             order.setStatus("VALIDATED");
             orderRepository.save(order);
