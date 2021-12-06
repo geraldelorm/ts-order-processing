@@ -21,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "portfolio")
+@Table(name = "portfolios")
 public class Portfolio {
 
     @Id
@@ -48,15 +48,15 @@ public class Portfolio {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @NotNull
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Product> productList = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
 
     @JsonIgnore
     public void addProduct(Product product){
-        productList.add(product);
+        products.add(product);
     }
 }
