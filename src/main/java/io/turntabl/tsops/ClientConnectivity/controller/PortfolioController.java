@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -26,15 +27,15 @@ public class PortfolioController {
         return portfolioService.getAllPortfolio();
     }
 
-    @GetMapping(path = "/{userId}")
-    public List<Portfolio> getUserPortfolio(@PathVariable("userId")Long userId){
-        return portfolioService.getUserPortfolio(userId);
+
+    @GetMapping(path = "/user")
+    public List<Portfolio> getUserPortfolio(){
+         return portfolioService.getUserPortfolio();
     }
 
-    @PostMapping(path = "create/{userId}")
-    public ResponseEntity<Void> createPortfolio(@RequestBody PortfolioDto portfolioDto, @PathVariable("userId")Long userId){
-
-         portfolioService.createPortfolio(portfolioDto, userId);
+    @PostMapping(path = "/create")
+    public ResponseEntity<Void> createPortfolio(@RequestBody PortfolioDto portfolioDto){
+         portfolioService.createPortfolio(portfolioDto);
          return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

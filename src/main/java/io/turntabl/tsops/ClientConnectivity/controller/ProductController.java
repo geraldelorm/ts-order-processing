@@ -18,7 +18,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Product> getAllProduct(){
         return productService.getAllProduct();
     }
@@ -28,13 +28,14 @@ public class ProductController {
         return productService.getUserProduct(userId);
     }*/
 
-    @GetMapping(path = "/{productId}")
-    public Set<Product> getProductsFromPortfolio(@PathVariable("productId")Long productId){
-        return productService.getProductsFromPortfolio(productId);
+    @GetMapping(path = "/{portfolioId}")
+    public List<Product> getProductsFromPortfolio(@PathVariable("portfolioId")Long portfolioId){
+        return productService.getProductsFromPortfolio(portfolioId);
     }
 
     @PostMapping(path = "create/{portfolioId}")
     public ResponseEntity<Void> createProduct(@RequestBody ProductDto productDto, @PathVariable("portfolioId")Long portfolioId ){
+        //TODO: get product from the order
         productService.createProduct(productDto,portfolioId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

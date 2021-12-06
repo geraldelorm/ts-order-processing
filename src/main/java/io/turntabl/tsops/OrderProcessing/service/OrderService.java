@@ -2,6 +2,7 @@ package io.turntabl.tsops.OrderProcessing.service;
 
 import io.turntabl.tsops.ClientConnectivity.entity.User;
 import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
+import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Autowired
     MarketDataService marketDataService;
@@ -30,19 +32,19 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public List<Order> getUserOrder(Long userId) {
-        User user = userRepository.getById(userId);
+    public List<Order> getUserOrder() {
+        User user = authService.getCurrentUser();
         return user.getOrders();
     }
 
-    public void createOrder(OrderDto orderDto, Long userId) {
+    public void createOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setProduct(orderDto.getProduct());
         order.setQuantity(orderDto.getQuantity());
         order.setPrice(orderDto.getPrice());
         order.setSide(orderDto.getSide());
         order.setStatus("CREATED");
-        order.setUser(userRepository.getById(userId));
+        order.setUser(authService.getCurrentUser());
         orderRepository.save(order);
 
         orderValidationService.validateOrder(orderDto, order);

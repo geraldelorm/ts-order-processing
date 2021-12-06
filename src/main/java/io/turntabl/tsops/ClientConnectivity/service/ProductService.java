@@ -18,8 +18,8 @@ import java.util.Set;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final PortfolioRepository portfolioRepository;
+    private final AuthService authService;
 
     //get all product
     public List<Product> getAllProduct(){
@@ -27,19 +27,18 @@ public class ProductService {
     }
 
     //get user's products
-    /*public List<Product> getUserProduct(Long userId){
-        User user = userRepository.getById(userId);
-        return null; //TODO: write native sql with inner join to get the userID for products
-    }*/
-
-    //get products from a specific portfolio
-    public Set<Product> getProductsFromPortfolio(Long portfolioId){
-        Portfolio portfolio = portfolioRepository.getById(portfolioId);
-        //return portfolio.getProduct();
+    public List<Product> getUserProduct(Long userId){
+        User user = authService.getCurrentUser();
         return null;
     }
 
-    //create a product - when you succ buy a product implement logic to be assigned to a user
+    //get products from a specific portfolio
+    public List<Product> getProductsFromPortfolio(Long portfolioId){
+        Portfolio portfolio = portfolioRepository.getById(portfolioId);
+        return portfolio.getProductList();
+    }
+
+    //create a product - when you successfully buy a product implement logic to be assigned to a user
     public void createProduct(ProductDto productDto, Long portfolioId){
         Product product = new Product();
         Portfolio portfolio = portfolioRepository.getById(portfolioId);
