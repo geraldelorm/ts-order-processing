@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -28,8 +29,14 @@ public class ExchangeConnectivity {
     @Value("${privateKey}")
     private final String ExchangeKey = "457a1e4f-09ac-4421-9259-fe4d9a999577";
 
-    public void sendOrderToExchangeOne(OrderDto orderDto, Order order) {
-        String orderUrlFroExOne = "https://exchange.matraining.com/" + ExchangeKey + "/order";
+    public void sendOrderToExchange(OrderDto orderDto, Order order, int exchange) {
+        String exchangeUrl;
+        if (exchange == 1) {
+            exchangeUrl = "https://exchange.matraining.com/";
+        } else {
+            exchangeUrl = "https://exchange2.matraining.com/";
+        }
+        String orderUrlFroExOne = exchangeUrl + ExchangeKey + "/order";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -41,35 +48,50 @@ public class ExchangeConnectivity {
         orderJsonObject.put("side", orderDto.getSide());
 
         HttpEntity<String> request = new HttpEntity<>(orderJsonObject.toString(), headers);
-        String orderIDFromExchange = restTemplate.postForObject(orderUrlFroExOne, request, String.class);
 
-        order.setOrderIdFromExchange(orderIDFromExchange);
-        order.setStatus("SENT TO EXCHANGE");
-        orderRepository.save(order);
+        try {
+            String orderIDFromExchange = restTemplate.postForObject(orderUrlFroExOne, request, String.class);
+            order.setOrderIdFromExchange(orderIDFromExchange);
+            order.setStatus("SENT");
+            orderRepository.save(order);
 
-        //TODO //Send order details to reporting service for tracking
-        checkOrderStatusOnExchangeOne(orderIDFromExchange, order);
+            //TODO //Send order details to reporting service for tracking
+            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+
+        } catch (HttpServerErrorException e){
+            order.setStatus("FAILED");
+            orderRepository.save(order);
+            log.info("Order Failed on submission to exchange");
+        }
     }
 
-    public void checkOrderStatusOnExchangeOne(String orderIdFromEx, Order order){
+    public void checkOrderStatusOnExchange(String orderIdFromEx, Order order, int exchange){
         String orderID = orderIdFromEx.replaceAll("^\"+|\"+$", "");
+        String exchangeUrl;
+        if (exchange == 1) {
+            exchangeUrl = "https://exchange.matraining.com/";
+        } else {
+            exchangeUrl = "https://exchange2.matraining.com/";
+        }
 
         while (!order.getStatus().equals("EXECUTED")){
             log.info("Order Status: " + order.getStatus());
-            String orderStatusUrlFroExOne = "https://exchange.matraining.com/" + ExchangeKey + "/order/" + orderID ;
+            String orderStatusUrl = exchangeUrl + ExchangeKey + "/order/" + orderID ;
 
-            OrderInfoFromExchange orderInfoFromExchange = restTemplate.getForObject(orderStatusUrlFroExOne, OrderInfoFromExchange.class);
-            log.info("Order Info From Exchange: " + orderInfoFromExchange);
+            try{
+                OrderInfoFromExchange orderInfoFromExchange = restTemplate.getForObject(orderStatusUrl, OrderInfoFromExchange.class);
+                log.info("Order Info From Exchange: " + orderInfoFromExchange);
 
-            int cumulativeQuantity = orderInfoFromExchange.getCumulativeQuantity();
-            int quantity = orderInfoFromExchange.getQuantity();
+                int cumulativeQuantity = orderInfoFromExchange.getCumulativeQuantity();
 
-            if (cumulativeQuantity == quantity){
-                order.setStatus("FULLY EXECUTED");
+                if (cumulativeQuantity > 0){
+                    order.setStatus("PARTLY EXECUTED");
+                    orderRepository.save(order);
+                }
+            } catch (HttpServerErrorException e) {
+                order.setStatus("EXECUTED");
                 orderRepository.save(order);
-            } else if (cumulativeQuantity > 0){
-                order.setStatus("PARTLY EXECUTED");
-                orderRepository.save(order);
+                log.info("Order Status: EXECUTED" );
             }
         }
     }
