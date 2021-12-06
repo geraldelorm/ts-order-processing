@@ -55,7 +55,7 @@ public class Order {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 

@@ -15,11 +15,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "product")
+@Table(name = "products")
 public class Product {
 
     @Id
-    @Column(name = "id", nullable = true)
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

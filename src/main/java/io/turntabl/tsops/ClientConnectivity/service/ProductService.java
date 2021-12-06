@@ -35,7 +35,7 @@ public class ProductService {
     //get products from a specific portfolio
     public List<Product> getProductsFromPortfolio(Long portfolioId){
         Portfolio portfolio = portfolioRepository.getById(portfolioId);
-        return portfolio.getProductList();
+        return portfolio.getProducts();
     }
 
     //create a product - when you successfully buy a product implement logic to be assigned to a user

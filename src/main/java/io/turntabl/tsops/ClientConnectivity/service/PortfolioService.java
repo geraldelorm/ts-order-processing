@@ -7,6 +7,8 @@ import io.turntabl.tsops.ClientConnectivity.entity.User;
 import io.turntabl.tsops.ClientConnectivity.repository.PortfolioRepository;
 import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,14 +30,7 @@ public class PortfolioService {
     //get one user's portfolio
     public List<Portfolio> getUserPortfolio(){
         User user = authService.getCurrentUser();
-        if(user.getUserRole().equals("client")){
-            return user.getPortfolio();
-        }
-        else {
-            List<Portfolio> portfolios = new ArrayList<>();
-            return portfolios;
-        }
-
+        return user.getPortfolio();
     }
 
     //create a portfolio

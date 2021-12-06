@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "client")
+@Table(name = "users")
 @Entity
 public class User {
     @Id
@@ -47,6 +47,7 @@ public class User {
     private String userRole;
 
     @Column(name = "account_balance")
+    @NotNull
     private Double account_balance;
 
     @Column(name = "created_at")
