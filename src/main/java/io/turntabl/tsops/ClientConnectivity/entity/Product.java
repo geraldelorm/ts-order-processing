@@ -42,4 +42,9 @@ public class Product {
     @JsonIgnore
     private Long portfolioId;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }

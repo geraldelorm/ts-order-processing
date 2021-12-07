@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final AuthService authService;
 
     @Autowired

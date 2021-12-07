@@ -18,15 +18,15 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Product> getAllProduct(){
         return productService.getAllProduct();
     }
 
-    /*@GetMapping(path = "/product/{userId}")
-    public List<Product> getUserProduct(@PathVariable("userId")Long userId){
-        return productService.getUserProduct(userId);
-    }*/
+    @GetMapping(path = "/user")
+    public List<Product> getUserProduct(){
+        return productService.getUserProduct();
+    }
 
     @GetMapping(path = "/{portfolioId}")
     public List<Product> getProductsFromPortfolio(@PathVariable("portfolioId")Long portfolioId){
