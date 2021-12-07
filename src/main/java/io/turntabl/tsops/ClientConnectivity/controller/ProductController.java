@@ -19,17 +19,17 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<Product> getAllProduct(){
+    public ResponseEntity<List<Product>> getAllProduct(){
         return productService.getAllProduct();
     }
 
     @GetMapping(path = "/user")
-    public List<Product> getUserProduct(){
+    public ResponseEntity<List<Product>> getUserProduct(){
         return productService.getUserProduct();
     }
 
     @GetMapping(path = "/{portfolioId}")
-    public List<Product> getProductsFromPortfolio(@PathVariable("portfolioId")Long portfolioId){
+    public ResponseEntity<List<Product>> getProductsFromPortfolio(@PathVariable("portfolioId")Long portfolioId){
         return productService.getProductsFromPortfolio(portfolioId);
     }
 

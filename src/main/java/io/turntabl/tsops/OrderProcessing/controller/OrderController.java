@@ -1,5 +1,6 @@
 package io.turntabl.tsops.OrderProcessing.controller;
 
+import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.service.OrderService;
@@ -16,21 +17,25 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final AuthService authService;
 
     @GetMapping
-    public List<Order> getAllOrder(){
+    public ResponseEntity<List<Order>> getAllOrder(){
         return orderService.getAllOrder();
     }
 
     @GetMapping(path = "/user")
-    public List<Order> getUserOrder(){
+    public ResponseEntity<List<Order>> getUserOrder(){
         return orderService.getUserOrder();
     }
 
     @PostMapping(path = "/create")
     public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto){
+        if(authService.isClient()){
+            orderService.createOrder(orderDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        else return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
-        orderService.createOrder(orderDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

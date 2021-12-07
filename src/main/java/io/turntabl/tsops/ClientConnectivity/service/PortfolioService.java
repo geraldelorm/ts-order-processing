@@ -5,13 +5,10 @@ import io.turntabl.tsops.ClientConnectivity.dto.PortfolioDto;
 import io.turntabl.tsops.ClientConnectivity.entity.Portfolio;
 import io.turntabl.tsops.ClientConnectivity.entity.User;
 import io.turntabl.tsops.ClientConnectivity.repository.PortfolioRepository;
-import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,27 +16,36 @@ import java.util.List;
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
-    private final UserRepository userRepository;
     private final AuthService authService;
 
     //get all portfolios
-    public List<Portfolio> getAllPortfolio(){
-        return portfolioRepository.findAll();
+    public ResponseEntity<List<Portfolio>> getAllPortfolio(){
+        if(authService.isAdmin()){
+            return new ResponseEntity<>(portfolioRepository.findAll(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     //get one user's portfolio
-    public List<Portfolio> getUserPortfolio(){
+    public ResponseEntity<List<Portfolio>> getUserPortfolio(){
         User user = authService.getCurrentUser();
-        return user.getPortfolio();
+        if(authService.isClient()){
+            return new ResponseEntity<>(user.getPortfolio(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     //create a portfolio
     public void createPortfolio(PortfolioDto portfolioDto){
-        Portfolio portfolio = new Portfolio();
-        User user = authService.getCurrentUser();
-        portfolio.setName(portfolioDto.getName());
-        portfolio.setDescription(portfolioDto.getDescription());
-        portfolio.setUser(user);
-        portfolioRepository.save(portfolio);
+            Portfolio portfolio = new Portfolio();
+            User user = authService.getCurrentUser();
+            portfolio.setName(portfolioDto.getName());
+            portfolio.setDescription(portfolioDto.getDescription());
+            portfolio.setUser(user);
+            portfolioRepository.save(portfolio);
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
@@ -37,11 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 UsernamePasswordAuthenticationFilter.class);
     }
 
-//    @Autowired
+    //    @Autowired
 //    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 //        authenticationManagerBuilder.userDetailsService(userDetailsService)
 //                .passwordEncoder(passwordEncoder());
 //    }
+
 
     @Bean
     PasswordEncoder passwordEncoder() {

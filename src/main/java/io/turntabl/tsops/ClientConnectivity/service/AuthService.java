@@ -88,6 +88,14 @@ public class AuthService {
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
     }
 
+    public boolean isClient(){
+        return getCurrentUser().getUserRole().equals("CLIENT");
+    }
+
+    public boolean isAdmin(){
+        return getCurrentUser().getUserRole().equals("ADMIN");
+    }
+
 
     public User findUserByEmail(final String email) {
         return userRepository.findByEmail(email);
