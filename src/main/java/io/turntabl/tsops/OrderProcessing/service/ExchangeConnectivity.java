@@ -92,6 +92,7 @@ public class ExchangeConnectivity {
                 order.setStatus("EXECUTED");
                 orderRepository.save(order);
                 log.info("Order Status: EXECUTED" );
+
                 //IF order is on the sell side increase account Balance
                 //IF order is on the buy side decrease account Balance
             }
