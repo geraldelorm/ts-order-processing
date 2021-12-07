@@ -41,9 +41,7 @@ public class OrderService {
         if(authService.isClient()){
             return new ResponseEntity<>(user.getOrders(), HttpStatus.OK);
         }
-        else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
 
     }
 
