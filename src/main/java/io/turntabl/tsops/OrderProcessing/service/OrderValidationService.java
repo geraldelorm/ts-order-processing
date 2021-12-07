@@ -56,6 +56,7 @@ public class OrderValidationService {
 
             //TODO
             //DECIDE WHICH EXCHANGE TO SEND TO
+            //Get OrderBook from both Exchanges
             // for sell side - send other to the exchange with highest price
             // for buy side - send other to the exchange with lowest price
             exchangeConnectivity.sendOrderToExchange(orderDto, order, 1);

@@ -61,5 +61,14 @@ public class OrderService {
         orderValidationService.validateOrder(orderDto, order);
     }
 
+    //TODO
+    public void updateOrder(){
+
+    }
+
+    //TODO
+    public void deleteOrder(){
+
+    }
 
 }
