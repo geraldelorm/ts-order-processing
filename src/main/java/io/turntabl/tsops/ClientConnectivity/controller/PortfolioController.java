@@ -19,7 +19,6 @@ import java.util.List;
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
-    private final AuthService authService;
 
 
     @GetMapping

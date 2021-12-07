@@ -39,12 +39,13 @@ public class OrderService {
 
     public void createOrder(OrderDto orderDto) {
         Order order = new Order();
+        User user = authService.getCurrentUser();
         order.setProduct(orderDto.getProduct());
         order.setQuantity(orderDto.getQuantity());
         order.setPrice(orderDto.getPrice());
         order.setSide(orderDto.getSide());
         order.setStatus("CREATED");
-        order.setUser(authService.getCurrentUser());
+        order.setUser(user);
         orderRepository.save(order);
 
         orderValidationService.validateOrder(orderDto, order);
