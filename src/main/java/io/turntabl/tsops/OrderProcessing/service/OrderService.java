@@ -1,13 +1,14 @@
 package io.turntabl.tsops.OrderProcessing.service;
 
 import io.turntabl.tsops.ClientConnectivity.entity.User;
-import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,13 +28,23 @@ public class OrderService {
     @Autowired
     OrderValidationService orderValidationService;
 
-    public List<Order> getAllOrder() {
-        return orderRepository.findAll();
+    public ResponseEntity<List<Order>> getAllOrder() {
+        if(authService.isAdmin()){
+            return new ResponseEntity<>(orderRepository.findAll(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
-    public List<Order> getUserOrder() {
+    public ResponseEntity<List<Order>> getUserOrder() {
         User user = authService.getCurrentUser();
-        return user.getOrders();
+        if(authService.isClient()){
+            return new ResponseEntity<>(user.getOrders(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
     public void createOrder(OrderDto orderDto) {
