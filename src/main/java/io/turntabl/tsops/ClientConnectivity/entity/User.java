@@ -67,5 +67,9 @@ public class User {
     @JsonIgnore
     private List<Order> orders;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Product> products;
+
 
 }

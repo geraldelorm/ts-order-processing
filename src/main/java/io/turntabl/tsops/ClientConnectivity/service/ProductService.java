@@ -26,10 +26,10 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    //get user's products
-    public List<Product> getUserProduct(Long userId){
+    //get all user's products
+    public List<Product> getUserProduct(){
         User user = authService.getCurrentUser();
-        return null;
+        return user.getProducts();
     }
 
     //get products from a specific portfolio
@@ -38,14 +38,18 @@ public class ProductService {
         return portfolio.getProducts();
     }
 
-    //create a product - when you successfully buy a product implement logic to be assigned to a user
+    //create a product
     public void createProduct(ProductDto productDto, Long portfolioId){
+        //TODO :  when you successfully buy a product implement logic to be assigned to a user
+        //TODO : get this from the ordr the person has made
         Product product = new Product();
+        User user = authService.getCurrentUser();
         Portfolio portfolio = portfolioRepository.getById(portfolioId);
         product.setTicker(productDto.getTicker());
         product.setQuantity(productDto.getQuantity());
         product.setPortfolioId(portfolioId);
         portfolio.addProduct(product);
+        product.setUser(user);
         productRepository.save(product);
     }
 }
