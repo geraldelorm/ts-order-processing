@@ -4,6 +4,7 @@ import io.turntabl.tsops.ClientConnectivity.entity.User;
 import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
+import io.turntabl.tsops.OrderProcessing.entity.OrderStatus;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class OrderService {
         order.setQuantity(orderDto.getQuantity());
         order.setPrice(orderDto.getPrice());
         order.setSide(orderDto.getSide());
-        order.setStatus("CREATED");
+        order.setStatus(OrderStatus.CREATED);
         order.setUser(user);
         orderRepository.save(order);
 
