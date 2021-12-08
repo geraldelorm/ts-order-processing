@@ -35,12 +35,14 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrder(){
-        return orderService.getAllOrder();
+        if(authService.isAdmin()) return new ResponseEntity<>(orderService.getAllOrder(), HttpStatus.OK) ;
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @GetMapping(path = "/user")
     public ResponseEntity<List<Order>> getUserOrder(){
-        return orderService.getUserOrder();
+        if(authService.isClient()) return new ResponseEntity<>(orderService.getUserOrder(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping(path = "/create")
@@ -49,7 +51,7 @@ public class OrderController {
             orderService.createOrder(orderDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        else return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 
