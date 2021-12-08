@@ -41,7 +41,7 @@ public class Order {
     private String orderIdFromExchange;
 
     @Column(name = "status")
-    private String status;
+    private Enum status;
 
     @Column(name = "created_at")
     @CreationTimestamp

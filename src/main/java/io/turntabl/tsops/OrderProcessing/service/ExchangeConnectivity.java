@@ -3,6 +3,7 @@ package io.turntabl.tsops.OrderProcessing.service;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.entity.OrderInfoFromExchange;
+import io.turntabl.tsops.OrderProcessing.entity.OrderStatus;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,14 +53,14 @@ public class ExchangeConnectivity {
         try {
             String orderIDFromExchange = restTemplate.postForObject(orderSubmissionUrl, request, String.class);
             order.setOrderIdFromExchange(orderIDFromExchange);
-            order.setStatus("SENT");
+            order.setStatus(OrderStatus.PENDING);
             orderRepository.save(order);
 
             //TODO //Send order details to reporting service for tracking
             checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
 
         } catch (HttpServerErrorException e){
-            order.setStatus("FAILED");
+            order.setStatus(OrderStatus.FAILED);
             orderRepository.save(order);
             log.info("Order Failed on submission to exchange");
         }
@@ -74,7 +75,7 @@ public class ExchangeConnectivity {
             exchangeUrl = "https://exchange2.matraining.com/";
         }
 
-        while (!order.getStatus().equals("EXECUTED")){
+        while (!order.getStatus().equals(OrderStatus.EXECUTED)){
             log.info("Order Status: " + order.getStatus());
             String orderStatusUrl = exchangeUrl + ExchangeKey + "/order/" + orderID ;
 
@@ -85,11 +86,11 @@ public class ExchangeConnectivity {
                 int cumulativeQuantity = orderInfoFromExchange.getCumulativeQuantity();
 
                 if (cumulativeQuantity > 0){
-                    order.setStatus("PARTLY EXECUTED");
+                    order.setStatus(OrderStatus.INPROGRESS);
                     orderRepository.save(order);
                 }
             } catch (HttpServerErrorException e) {
-                order.setStatus("EXECUTED");
+                order.setStatus(OrderStatus.EXECUTED);
                 orderRepository.save(order);
                 log.info("Order Status: EXECUTED" );
 
