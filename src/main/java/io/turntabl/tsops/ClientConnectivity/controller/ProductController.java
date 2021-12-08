@@ -2,6 +2,7 @@ package io.turntabl.tsops.ClientConnectivity.controller;
 
 import io.turntabl.tsops.ClientConnectivity.dto.ProductDto;
 import io.turntabl.tsops.ClientConnectivity.entity.Product;
+import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.ClientConnectivity.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,20 +18,28 @@ import java.util.Set;
 public class ProductController {
 
     private final ProductService productService;
+    private final AuthService authService;
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProduct(){
-        return productService.getAllProduct();
+
+        if(authService.isAdmin()) return new ResponseEntity<>(productService.getAllProduct(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @GetMapping(path = "/user")
     public ResponseEntity<List<Product>> getUserProduct(){
-        return productService.getUserProduct();
+
+        if(authService.isClient()) return new ResponseEntity<>(productService.getUserProduct(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
     }
 
     @GetMapping(path = "/{portfolioId}")
     public ResponseEntity<List<Product>> getProductsFromPortfolio(@PathVariable("portfolioId")Long portfolioId){
-        return productService.getProductsFromPortfolio(portfolioId);
+
+        if(authService.isClient()) return new ResponseEntity<>(productService.getProductsFromPortfolio(portfolioId), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping(path = "create/{portfolioId}")
