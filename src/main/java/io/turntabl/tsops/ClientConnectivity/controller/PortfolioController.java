@@ -22,13 +22,19 @@ public class PortfolioController {
 
     @GetMapping
     public ResponseEntity<List<Portfolio>> geAllPortfolio(){
-        return portfolioService.getAllPortfolio();
+        if(authService.isAdmin()) return new ResponseEntity<>(portfolioService.getAllPortfolio(), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 
     @GetMapping(path = "/user")
     public ResponseEntity<List<Portfolio>> getUserPortfolio(){
-         return portfolioService.getUserPortfolio();
+        if(authService.isClient()){
+            return new ResponseEntity<>(portfolioService.getUserPortfolio(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @PostMapping(path = "/create")
@@ -37,7 +43,7 @@ public class PortfolioController {
             portfolioService.createPortfolio(portfolioDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        else return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
     }
 

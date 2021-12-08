@@ -6,7 +6,6 @@ import io.turntabl.tsops.ClientConnectivity.entity.Product;
 import io.turntabl.tsops.ClientConnectivity.entity.User;
 import io.turntabl.tsops.ClientConnectivity.repository.PortfolioRepository;
 import io.turntabl.tsops.ClientConnectivity.repository.ProductRepository;
-import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,35 +23,20 @@ public class ProductService {
     private final AuthService authService;
 
     //get all product
-    public ResponseEntity<List<Product>> getAllProduct(){
-        if(authService.isAdmin()){
-            return new ResponseEntity<>(productRepository.findAll(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    public List<Product> getAllProduct(){
+       return productRepository.findAll();
     }
 
     //get all user's products
-    public ResponseEntity<List<Product>> getUserProduct(){
+    public List<Product> getUserProduct(){
         User user = authService.getCurrentUser();
-        if(authService.isClient()){
-            return new ResponseEntity<>(user.getProducts(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        return user.getProducts();
     }
 
     //get products from a specific portfolio
-    public ResponseEntity<List<Product>> getProductsFromPortfolio(Long portfolioId){
+    public List<Product> getProductsFromPortfolio(Long portfolioId){
         Portfolio portfolio = portfolioRepository.getById(portfolioId);
-        if(authService.isClient()){
-            return new ResponseEntity<>(portfolio.getProducts(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        return  portfolio.getProducts();
 
     }
 

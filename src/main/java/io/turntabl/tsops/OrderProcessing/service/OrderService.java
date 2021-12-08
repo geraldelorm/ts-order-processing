@@ -28,21 +28,13 @@ public class OrderService {
     @Autowired
     OrderValidationService orderValidationService;
 
-    public ResponseEntity<List<Order>> getAllOrder() {
-        if(authService.isAdmin()){
-            return new ResponseEntity<>(orderRepository.findAll(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    public List<Order> getAllOrder() {
+       return orderRepository.findAll();
     }
 
-    public ResponseEntity<List<Order>> getUserOrder() {
+    public List<Order> getUserOrder() {
         User user = authService.getCurrentUser();
-        if(authService.isClient()){
-            return new ResponseEntity<>(user.getOrders(), HttpStatus.OK);
-        }
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-
+        return user.getOrders();
     }
 
     public void createOrder(OrderDto orderDto) {

@@ -19,24 +19,14 @@ public class PortfolioService {
     private final AuthService authService;
 
     //get all portfolios
-    public ResponseEntity<List<Portfolio>> getAllPortfolio(){
-        if(authService.isAdmin()){
-            return new ResponseEntity<>(portfolioRepository.findAll(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    public List<Portfolio> getAllPortfolio(){
+        return portfolioRepository.findAll();
     }
 
     //get one user's portfolio
-    public ResponseEntity<List<Portfolio>> getUserPortfolio(){
+    public List<Portfolio> getUserPortfolio(){
         User user = authService.getCurrentUser();
-        if(authService.isClient()){
-            return new ResponseEntity<>(user.getPortfolio(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        return user.getPortfolio();
     }
 
     //create a portfolio
