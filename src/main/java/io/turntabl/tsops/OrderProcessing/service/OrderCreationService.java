@@ -17,12 +17,13 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class OrderService {
+public class OrderCreationService {
     private final OrderRepository orderRepository;
     private final AuthService authService;
 
     @Autowired
     MarketDataService marketDataService;
+
     @Autowired
     RestTemplate restTemplate;
 
