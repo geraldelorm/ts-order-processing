@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ExchangeConnectivity {
+public class ExchangeConnectivityService {
 
     private final OrderRepository orderRepository;
 
@@ -56,7 +56,8 @@ public class ExchangeConnectivity {
             order.setStatus(OrderStatus.PENDING);
             orderRepository.save(order);
 
-            //TODO //Send order details to reporting service for tracking
+            //TODO
+            // Send order details to reporting service for tracking
             checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
 
         } catch (HttpServerErrorException e){
@@ -86,7 +87,7 @@ public class ExchangeConnectivity {
                 int cumulativeQuantity = orderInfoFromExchange.getCumulativeQuantity();
 
                 if (cumulativeQuantity > 0){
-                    order.setStatus(OrderStatus.INPROGRESS);
+                    order.setStatus(OrderStatus.IN_PROGRESS);
                     orderRepository.save(order);
                 }
             } catch (HttpServerErrorException e) {
@@ -94,8 +95,10 @@ public class ExchangeConnectivity {
                 orderRepository.save(order);
                 log.info("Order Status: EXECUTED" );
 
-                //IF order is on the sell side increase account Balance
-                //IF order is on the buy side decrease account Balance
+                //TODO
+                // IF order is on the sell side increase account Balance
+                // IF order is on the buy side decrease account Balance
+                // Increase or Decrease product quantity for the user
             }
         }
     }
