@@ -1,40 +1,47 @@
-package io.turntabl.tsops.ClientConnectivity.entity;
+package io.turntabl.tsops.OrderProcessing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.turntabl.tsops.ClientConnectivity.dto.ProductDto;
+import io.turntabl.tsops.ClientConnectivity.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
 
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Table(name = "portfolios")
-public class Portfolio {
-
+@Table(name = "orders")
+public class Order {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    @NotNull
-    private String name;
+    @Column(name = "product")
+    private String product;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "price")
+    private Double price;
+
+    @Column(name = "side")
+    private String side ;
+
+    @Column(name = "order_id_exchange")
+    private String orderIdFromExchange;
+
+    @Column(name = "status")
+    private Enum status;
 
     @Column(name = "created_at")
     @CreationTimestamp
@@ -51,12 +58,6 @@ public class Portfolio {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotNull
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Product> products = new ArrayList<>();
 
-    @JsonIgnore
-    public void addProduct(Product product){
-        products.add(product);
-    }
+
 }

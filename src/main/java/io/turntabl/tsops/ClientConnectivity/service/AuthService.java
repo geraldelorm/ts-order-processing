@@ -39,8 +39,8 @@ public class AuthService {
             user.setLastName(registerRequest.getLastName());
             user.setEmail(registerRequest.getEmail());
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            user.setCreatedAt(new Date());
-            user.setUserRole(registerRequest.getUserRole());
+            user.setAccount_balance(5000.00);
+            user.setUserRole(registerRequest.getUserRole().toUpperCase());
             userRepository.save(user);
     }
 
@@ -86,6 +86,14 @@ public class AuthService {
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
+
+    public boolean isClient(){
+        return getCurrentUser().getUserRole().equals("CLIENT");
+    }
+
+    public boolean isAdmin(){
+        return getCurrentUser().getUserRole().equals("ADMIN");
     }
 
 
