@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +27,9 @@ public class ExchangeConnectivityService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    JmsTemplate jmsTemplate;
 
     @Value("${privateKey}")
     private final String ExchangeKey = "457a1e4f-09ac-4421-9259-fe4d9a999577";
@@ -54,17 +58,24 @@ public class ExchangeConnectivityService {
             String orderIDFromExchange = restTemplate.postForObject(orderSubmissionUrl, request, String.class);
             order.setOrderIdFromExchange(orderIDFromExchange);
             order.setStatus(OrderStatus.PENDING);
+            order.setExchangeSentTo(exchange);
             orderRepository.save(order);
 
             //TODO
             // Send order details to reporting service for tracking
-            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+            jmsTemplate.convertAndSend("orderIDQueue", orderIDFromExchange);
+
+//            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
 
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);
             orderRepository.save(order);
             log.info("Order Failed on submission to exchange");
         }
+    }
+
+    public void updateOrderOnExchange(OrderDto newOrderDto,String orderIDFromExchange, int exchange){
+
     }
 
     public void checkOrderStatusOnExchange(String orderIdFromEx, Order order, int exchange){
