@@ -2,7 +2,7 @@ package io.turntabl.tsops.OrderProcessing;
 
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
-import io.turntabl.tsops.OrderProcessing.service.OrderCreationService;
+import io.turntabl.tsops.OrderProcessing.service.OrderService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,10 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 @SpringBootTest
-class OrderCreationServiceTest {
+class OrderServiceTest {
 
     @InjectMocks
-    OrderCreationService orderCreationService;
+    OrderService orderService;
 
     @Mock
     OrderRepository orderRepository;
@@ -42,7 +42,7 @@ class OrderCreationServiceTest {
     void getAllOrder() {
         when(orderRepository.findAll()).thenReturn(orderList);
 
-        List<Order> orders = orderCreationService.getAllOrder();
+        List<Order> orders = orderService.getAllOrder();
 
         assertEquals(3, orders.size());
     }
