@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class OrderCreationService {
+public class OrderService {
     private final OrderRepository orderRepository;
     private final AuthService authService;
 
@@ -54,13 +54,13 @@ public class OrderCreationService {
     }
 
     //TODO
-    public void updateOrder(){
-
+    public void updateOrder(OrderDto orderDto){
+        //update order on exchange and DB
     }
 
     //TODO
-    public void deleteOrder(){
-
+    public void deleteOrder(int orderID){
+        //delete order from exchange and DB
     }
 
 }
