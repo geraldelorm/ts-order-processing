@@ -37,6 +37,9 @@ public class Order {
     @Column(name = "side")
     private String side ;
 
+    @Column(name = "exchangeSentTo")
+    private Integer exchangeSentTo;
+
     @Column(name = "order_id_exchange")
     private String orderIdFromExchange;
 
