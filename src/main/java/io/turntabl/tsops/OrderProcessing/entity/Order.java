@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.jetbrains.annotations.NotNull;
-
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -37,8 +34,8 @@ public class Order {
     @Column(name = "side")
     private String side ;
 
-    @Column(name = "exchangeSentTo")
-    private Integer exchangeSentTo;
+    @Column(name = "exchangeTradedOn")
+    private Integer exchangeTradedOn;
 
     @Column(name = "order_id_exchange")
     private String orderIdFromExchange;
@@ -60,7 +57,4 @@ public class Order {
     @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-
-
 }
