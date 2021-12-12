@@ -64,7 +64,6 @@ public class ExchangeConnectivityService {
             //checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
             jmsTemplate.convertAndSend("orderIDQueue", orderIDFromExchange);
 
-
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);
             orderRepository.save(order);
@@ -79,7 +78,7 @@ public class ExchangeConnectivityService {
     public void deleteOrderOnExchange(OrderDto newOrderDto,String orderIDFromExchange, int exchange){
 
     }
-
+  
     public void checkOrderStatusOnExchange(String orderIdFromEx, Order order, int exchange){
         String orderID = orderIdFromEx.replaceAll("^\"+|\"+$", "");
         String exchangeUrl;
