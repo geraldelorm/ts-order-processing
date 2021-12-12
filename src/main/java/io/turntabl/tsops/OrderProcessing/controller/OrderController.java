@@ -19,8 +19,9 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
+    @Autowired
     private final AuthService authService;
 
     @GetMapping
@@ -44,23 +45,23 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-//    @PutMapping(path = "/create")
-//    public ResponseEntity<Void> updateOrder(@RequestBody OrderDto orderDto){
-//        if(authService.isClient()){
-//            orderService.updateOrder(orderDto);
-//            return new ResponseEntity<>(HttpStatus.CREATED);
-//        }
-//        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//    }
-//
-//    @DeleteMapping(path = "/delete/{orderID}")
-//    public ResponseEntity<Void> deleteOrder(@RequestParam int orderID){
-//        if(authService.isClient()){
-//            orderService.deleteOrder(orderID);
-//            return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//        }
-//        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//    }
+    @PutMapping(path = "/create")
+    public ResponseEntity<Void> updateOrder(@RequestBody OrderDto orderDto){
+        if(authService.isClient()){
+            orderService.updateOrder(orderDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @DeleteMapping(path = "/delete/{orderID}")
+    public ResponseEntity<Void> deleteOrder(@RequestParam int orderID){
+        if(authService.isClient()){
+            orderService.deleteOrder(orderID);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
 
     //TODO
     // Get initial market Data even if marketDataService is not up.
