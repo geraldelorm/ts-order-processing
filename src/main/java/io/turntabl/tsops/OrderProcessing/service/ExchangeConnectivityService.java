@@ -60,7 +60,7 @@ public class ExchangeConnectivityService {
             //TODO
             // Send order details to reporting service for tracking
 //            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
-            jmsTemplate.convertAndSend("orderIDQueue", orderIDFromExchange);
+            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
 
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);

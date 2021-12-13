@@ -8,11 +8,11 @@
 		<version>2.6.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<groupId>io.turntabl</groupId>
+	<artifactId>ts-ops</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>ts-ops</name>
+	<description>Order Processing Microservice for trading system</description>
 
 	<properties>
 		<java.version>11</java.version>
