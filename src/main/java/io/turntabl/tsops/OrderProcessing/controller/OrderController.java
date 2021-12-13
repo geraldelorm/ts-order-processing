@@ -19,8 +19,9 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
+    @Autowired
     private final AuthService authService;
 
     @GetMapping
