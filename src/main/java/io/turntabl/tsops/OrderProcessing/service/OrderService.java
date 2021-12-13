@@ -43,7 +43,7 @@ public class OrderService {
         return user.getOrders();
     }
 
-    public void createOrder(OrderDto orderDto) {
+    public void createOrder(OrderDto orderDto, Long portfolioID) {
         Order order = new Order();
         User user = authService.getCurrentUser();
         order.setProduct(orderDto.getProduct());
@@ -52,6 +52,7 @@ public class OrderService {
         order.setSide(orderDto.getSide());
         order.setStatus(OrderStatus.CREATED);
         order.setUser(user);
+        order.setPortfolioID(portfolioID);
         orderRepository.save(order);
 
         orderValidationService.validateOrder(orderDto, order);

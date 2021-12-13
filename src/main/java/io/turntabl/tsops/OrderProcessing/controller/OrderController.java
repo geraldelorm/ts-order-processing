@@ -35,10 +35,10 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto){
+    @PostMapping(path = "/create/{portfolioID}")
+    public ResponseEntity<Void> createOrder(@PathVariable Long portfolioID, @RequestBody OrderDto orderDto){
         if(authService.isClient()){
-            orderService.createOrder(orderDto);
+            orderService.createOrder(orderDto, portfolioID);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
