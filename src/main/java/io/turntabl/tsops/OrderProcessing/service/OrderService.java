@@ -7,9 +7,9 @@ import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.entity.OrderStatus;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final AuthService authService;
@@ -29,6 +30,9 @@ public class OrderService {
 
     @Autowired
     OrderValidationService orderValidationService;
+
+    @Autowired
+    ExchangeConnectivityService exchangeConnectivityService;
 
     public List<Order> getAllOrder() {
        return orderRepository.findAll();
@@ -54,13 +58,25 @@ public class OrderService {
     }
 
     //TODO
-    public void updateOrder(OrderDto orderDto){
-        //update order on exchange and DB
+    public void updateOrder(OrderDto newOrderDto, Long orderID){
+        Order order = orderRepository.getById(orderID);
+
+        if(order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING)) {
+            exchangeConnectivityService.updateOrderOnExchange(newOrderDto, order);
+        } else {
+            log.info("Order you want to cancel is not open");
+        }
     }
 
     //TODO
-    public void deleteOrder(int orderID){
-        //delete order from exchange and DB
+    public void deleteOrder(Long orderID){
+        Order order = orderRepository.getById(orderID);
+
+        if(order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING)) {
+            exchangeConnectivityService.cancelOrderOnExchange(order);
+        } else {
+            log.info("Order you want to cancel is not open");
+        }
     }
 
 }

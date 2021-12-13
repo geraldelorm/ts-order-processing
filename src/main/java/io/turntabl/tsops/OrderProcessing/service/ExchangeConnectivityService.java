@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -61,7 +59,7 @@ public class ExchangeConnectivityService {
 
             //TODO
             // Send order details to reporting service for tracking
-            //checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+//            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
             jmsTemplate.convertAndSend("orderIDQueue", orderIDFromExchange);
 
         } catch (HttpServerErrorException e){
@@ -71,12 +69,72 @@ public class ExchangeConnectivityService {
         }
     }
 
-    public void updateOrderOnExchange(OrderDto newOrderDto,String orderIDFromExchange, int exchange){
+    public void updateOrderOnExchange(OrderDto newOrderDto,Order order){
+        String orderIDFromExchange = order.getOrderIdFromExchange().replaceAll("^\"+|\"+$", "");
+        int exchange = order.getExchangeTradedOn();
 
+        String exchangeUrl;
+        if (exchange == 1) {
+            exchangeUrl = "https://exchange.matraining.com/";
+        } else {
+            exchangeUrl = "https://exchange2.matraining.com/";
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        JSONObject orderJsonObject = new JSONObject();
+        orderJsonObject.put("product", newOrderDto.getProduct());
+        orderJsonObject.put("quantity", newOrderDto.getQuantity());
+        orderJsonObject.put("price", newOrderDto.getPrice());
+        orderJsonObject.put("side", newOrderDto.getSide());
+
+        HttpEntity<String> request = new HttpEntity<>(orderJsonObject.toString(), headers);
+
+        String orderUpdateUrl = exchangeUrl + ExchangeKey + "/order/" + orderIDFromExchange ;
+
+        ResponseEntity response = restTemplate.exchange(orderUpdateUrl, HttpMethod.PUT, request, String.class);
+
+        log.info(response.getBody().toString());
+
+        if (response.getBody().toString().equals("true")){
+            log.info("Order Updated " );
+            order.setStatus(OrderStatus.UPDATED);
+            order.setPrice(newOrderDto.getPrice());
+            order.setQuantity(newOrderDto.getQuantity());
+            order.setSide(newOrderDto.getSide());
+            order.setProduct(newOrderDto.getProduct());
+            orderRepository.save(order);
+        } else {
+            log.info("Order Not Updated" );
+        }
     }
 
-    public void deleteOrderOnExchange(OrderDto newOrderDto,String orderIDFromExchange, int exchange){
+    public void cancelOrderOnExchange(Order order){
+        String orderIDFromExchange = order.getOrderIdFromExchange().replaceAll("^\"+|\"+$", "");
+        int exchange = order.getExchangeTradedOn();
 
+        String exchangeUrl;
+        if (exchange == 1) {
+            exchangeUrl = "https://exchange.matraining.com/";
+        } else {
+            exchangeUrl = "https://exchange2.matraining.com/";
+        }
+
+        log.info("Order Status: " + order.getStatus());
+        String orderDeletionUrl = exchangeUrl + ExchangeKey + "/order/" + orderIDFromExchange ;
+
+        ResponseEntity response = restTemplate.exchange(orderDeletionUrl, HttpMethod.DELETE, null, String.class);
+
+        log.info(response.getBody().toString());
+
+        if (response.getBody().toString().equals("true")){
+            log.info("Order Canceled " );
+            order.setStatus(OrderStatus.CANCELED);
+            orderRepository.save(order);
+        } else {
+            log.info("Order Not Canceled " );
+        }
     }
   
     public void checkOrderStatusOnExchange(String orderIdFromEx, Order order, int exchange){
