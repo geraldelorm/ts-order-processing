@@ -21,14 +21,15 @@ import org.springframework.web.client.RestTemplate;
 public class ExchangeConnectivityService {
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
 
-    private final OrderRepository orderRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    private final String ExchangeKey = "457a1e4f-09ac-4421-9259-fe4d9a999577";
+    private final String ExchangeKey = "c524d78f-9843-4ba2-90fc-8c7dafdad34f";
 
     public void sendOrderToExchange(OrderDto orderDto, Order order, int exchange) {
         String exchangeUrl;
@@ -57,10 +58,9 @@ public class ExchangeConnectivityService {
             order.setExchangeTradedOn(exchange);
             orderRepository.save(order);
 
-            //TODO
-            // Send order details to reporting service for tracking
-//            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
-            jmsTemplate.convertAndSend("orderIDQueue", orderIDFromExchange);
+
+            //checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
 
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);

@@ -57,7 +57,6 @@ public class OrderService {
         orderValidationService.validateOrder(orderDto, order);
     }
 
-    //TODO
     public void updateOrder(OrderDto newOrderDto, Long orderID){
         Order order = orderRepository.getById(orderID);
 
@@ -68,7 +67,6 @@ public class OrderService {
         }
     }
 
-    //TODO
     public void deleteOrder(Long orderID){
         Order order = orderRepository.getById(orderID);
 
