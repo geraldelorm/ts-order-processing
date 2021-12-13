@@ -14,24 +14,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 public class AuthController {
 
-
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
 
-
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Void> signup(@RequestBody @Valid RegisterRequest registerRequest) {
         authService.signup(registerRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+    public AuthenticationResponse login(@RequestBody @Valid LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
 
@@ -45,7 +45,4 @@ public class AuthController {
         refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
         return new ResponseEntity<>("Refresh Token Deleted Successfully!!", HttpStatus.OK);
     }
-
-
-
 }
