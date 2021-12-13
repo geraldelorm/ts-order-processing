@@ -1,5 +1,11 @@
 package io.turntabl.tsops.OrderProcessing.service;
 
+import io.turntabl.tsops.ClientConnectivity.entity.Portfolio;
+import io.turntabl.tsops.ClientConnectivity.entity.Product;
+import io.turntabl.tsops.ClientConnectivity.entity.User;
+import io.turntabl.tsops.ClientConnectivity.repository.PortfolioRepository;
+import io.turntabl.tsops.ClientConnectivity.repository.ProductRepository;
+import io.turntabl.tsops.ClientConnectivity.repository.UserRepository;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
 import io.turntabl.tsops.OrderProcessing.entity.OrderInfoFromExchange;
@@ -28,6 +34,15 @@ public class ExchangeConnectivityService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private PortfolioRepository portfolioRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final String ExchangeKey = "c524d78f-9843-4ba2-90fc-8c7dafdad34f";
 
@@ -59,8 +74,8 @@ public class ExchangeConnectivityService {
             orderRepository.save(order);
 
 
-            //checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
-            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
+            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+//            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
 
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);
@@ -165,10 +180,28 @@ public class ExchangeConnectivityService {
                 orderRepository.save(order);
                 log.info("Order Status: EXECUTED" );
 
-                //TODO
-                // IF order is on the sell side increase account Balance
-                // IF order is on the buy side decrease account Balance
-                // Increase or Decrease product quantity for the user
+                //updating account balance
+                User user = order.getUser();
+                if (order.getSide().equals("SELL")){
+                    user.setAccount_balance(user.getAccount_balance() + (order.getPrice() * order.getQuantity()));
+                } else {
+                    user.setAccount_balance(user.getAccount_balance() - (order.getPrice() * order.getQuantity()));
+                }
+                userRepository.save(user);
+                log.info("Balance updated");
+
+                // updating product quantity for user
+                Portfolio portfolio = portfolioRepository.getById(order.getPortfolioID());
+                Product product = portfolio.getProducts().stream().filter(p -> p.getTicker().equals(order.getProduct())).findFirst().get();
+
+                if (order.getSide().equals("BUY")){
+                    product.setQuantity(product.getQuantity() + (order.getQuantity()));
+                } else {
+                    product.setQuantity(product.getQuantity() - (order.getQuantity()));
+                }
+                productRepository.save(product);
+                log.info("Product updated");
+
             }
         }
     }

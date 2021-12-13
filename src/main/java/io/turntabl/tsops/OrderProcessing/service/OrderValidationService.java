@@ -1,7 +1,9 @@
 package io.turntabl.tsops.OrderProcessing.service;
 
+import io.turntabl.tsops.ClientConnectivity.entity.Portfolio;
 import io.turntabl.tsops.ClientConnectivity.entity.Product;
 import io.turntabl.tsops.ClientConnectivity.entity.User;
+import io.turntabl.tsops.ClientConnectivity.repository.PortfolioRepository;
 import io.turntabl.tsops.ClientConnectivity.repository.ProductRepository;
 import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
@@ -26,6 +28,7 @@ public class OrderValidationService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final AuthService authService;
+    private final PortfolioRepository portfolioRepository;
 
     @Autowired
     ExchangeConnectivityService exchangeConnectivityService;
@@ -46,17 +49,21 @@ public class OrderValidationService {
         MarketData marketDataToValidateWith;
         int exchangeToTradeOn;
 
+        Portfolio portfolio = portfolioRepository.getById(order.getPortfolioID());
 
-        if (user.getProducts().stream().anyMatch(p -> p.getTicker().equals(orderDto.getProduct()))){
-            product = user.getProducts().stream().filter(p -> p.getTicker().equals(orderDto.getProduct())).findFirst().get();
+        if (portfolio.getProducts().stream().anyMatch(p -> p.getTicker().equals(orderDto.getProduct()))){
+            product = portfolio.getProducts().stream().filter(p -> p.getTicker().equals(orderDto.getProduct())).findFirst().get();
         } else {
             product = new Product();
             product.setTicker(orderDto.getProduct());
             product.setQuantity(0);
             product.setUser(user);
-            product.setPortfolioId(user.getPortfolio().get(0).getId()); //just temporal
-
+            product.setPortfolioId(order.getPortfolioID());
             productRepository.save(product);
+
+            portfolio.addProduct(product);
+            portfolioRepository.save(portfolio);
+
         }
 
 
