@@ -57,6 +57,7 @@ public class OrderValidationService {
             product = new Product();
             product.setTicker(orderDto.getProduct());
             product.setQuantity(0);
+            product.setValue(0.0);
             product.setUser(user);
             product.setPortfolioId(order.getPortfolioID());
             productRepository.save(product);
