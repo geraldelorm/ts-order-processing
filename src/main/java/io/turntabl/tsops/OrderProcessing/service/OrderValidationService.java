@@ -40,8 +40,18 @@ public class OrderValidationService {
         User user = authService.getCurrentUser();
         Product product;
 
-        MarketData mdForProductOnExOne = marketDataForAProductOnExOne(orderDto.getProduct());
-        MarketData mdForProductOnExTwo = marketDataForAProductOnExTwo(orderDto.getProduct());
+        MarketData mdForProductOnExOne = null;
+        MarketData mdForProductOnExTwo = null;
+
+        try {
+            mdForProductOnExOne = marketDataForAProductOnExOne(orderDto.getProduct());
+            mdForProductOnExTwo = marketDataForAProductOnExTwo(orderDto.getProduct());
+        } catch (Exception e) {
+            order.setStatus(OrderStatus.FAILED);
+            orderRepository.save(order);
+            log.info("Market Data not found");
+        }
+
 
 //        List<OrderInfoFromExchange> orderBookForProductOnExOne = orderBookForAProductOnExOne(orderDto.getProduct());
 //        List<OrderInfoFromExchange> orderBookForProductOnExTwo = orderBookForAProductOnExTwo(orderDto.getProduct());
@@ -67,45 +77,53 @@ public class OrderValidationService {
 
         }
 
+        if (mdForProductOnExOne != null && mdForProductOnExTwo != null){
+            if(orderDto.getSide().equals("SELL")){
+                if (mdForProductOnExOne.getLastTradedPrice() > mdForProductOnExTwo.getLastTradedPrice()){
+                    marketDataToValidateWith = mdForProductOnExOne;
+                    exchangeToTradeOn = 1;
+                } else {
+                    marketDataToValidateWith = mdForProductOnExTwo;
+                    exchangeToTradeOn = 2;
+                }
+                if (userHasTheEnoughProduct(product, orderDto)) {
+                    if (priceIsReasonable(orderDto, marketDataToValidateWith)){
+                        if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
+                            exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
+                        }
+                    }
+                } else {
+                    order.setStatus(OrderStatus.INVALID);
+                    orderRepository.save(order);
+                }
+            }else if (orderDto.getSide().equals("BUY")){
+                if (mdForProductOnExOne.getLastTradedPrice() < mdForProductOnExTwo.getLastTradedPrice()){
+                    marketDataToValidateWith = mdForProductOnExOne;
+                    exchangeToTradeOn = 1;
+                } else {
+                    marketDataToValidateWith = mdForProductOnExTwo;
+                    exchangeToTradeOn = 2;
+                }
+                if (userHasEnoughFunds(user, orderDto)){
+                    if (priceIsReasonable(orderDto, marketDataToValidateWith)) {
+                        if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
+                            exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
+                        }
+                    }
+                }
+                else {
+                    order.setStatus(OrderStatus.INVALID);
+                    orderRepository.save(order);
+                }
+            }
 
-        if(orderDto.getSide().equals("SELL")){
-            if (mdForProductOnExOne.getLastTradedPrice() > mdForProductOnExTwo.getLastTradedPrice()){
-                marketDataToValidateWith = mdForProductOnExOne;
-                exchangeToTradeOn = 1;
-            } else {
-                marketDataToValidateWith = mdForProductOnExTwo;
-                exchangeToTradeOn = 2;
-            }
-            if (userHasTheEnoughProduct(product, orderDto)) {
-                if (priceIsReasonable(orderDto, marketDataToValidateWith)){
-                    if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
-                        exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
-                    }
-                }
-            } else {
-                order.setStatus(OrderStatus.INVALID);
-                orderRepository.save(order);
-            }
-        }else if (orderDto.getSide().equals("BUY")){
-            if (mdForProductOnExOne.getLastTradedPrice() < mdForProductOnExTwo.getLastTradedPrice()){
-                marketDataToValidateWith = mdForProductOnExOne;
-                exchangeToTradeOn = 1;
-            } else {
-                marketDataToValidateWith = mdForProductOnExTwo;
-                exchangeToTradeOn = 2;
-            }
-            if (userHasEnoughFunds(user, orderDto)){
-                if (priceIsReasonable(orderDto, marketDataToValidateWith)) {
-                    if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
-                        exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
-                    }
-                }
-            }
-            else {
-                order.setStatus(OrderStatus.INVALID);
-                orderRepository.save(order);
-            }
+        } else {
+            log.info("Market Data not found");
+            order.setStatus(OrderStatus.FAILED);
+            orderRepository.save(order);
         }
+
+
             //TODO
             // DECIDE WHICH EXCHANGE TO SEND TO BASED ON ORDER BOOK
     }
