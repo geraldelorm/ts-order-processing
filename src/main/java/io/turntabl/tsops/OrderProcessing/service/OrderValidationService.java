@@ -43,8 +43,8 @@ public class OrderValidationService {
         MarketData mdForProductOnExOne = marketDataForAProductOnExOne(orderDto.getProduct());
         MarketData mdForProductOnExTwo = marketDataForAProductOnExTwo(orderDto.getProduct());
 
-        List<OrderInfoFromExchange> orderBookForProductOnExOne = orderBookForAProductOnExOne(orderDto.getProduct());
-        List<OrderInfoFromExchange> orderBookForProductOnExTwo = orderBookForAProductOnExTwo(orderDto.getProduct());
+//        List<OrderInfoFromExchange> orderBookForProductOnExOne = orderBookForAProductOnExOne(orderDto.getProduct());
+//        List<OrderInfoFromExchange> orderBookForProductOnExTwo = orderBookForAProductOnExTwo(orderDto.getProduct());
 
         MarketData marketDataToValidateWith;
         int exchangeToTradeOn;
@@ -57,6 +57,7 @@ public class OrderValidationService {
             product = new Product();
             product.setTicker(orderDto.getProduct());
             product.setQuantity(0);
+            product.setValue(0.0);
             product.setUser(user);
             product.setPortfolioId(order.getPortfolioID());
             productRepository.save(product);

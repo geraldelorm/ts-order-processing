@@ -22,8 +22,8 @@ public class PortfolioController {
 
     @GetMapping
     public ResponseEntity<List<Portfolio>> geAllPortfolio(){
-       if(authService.isAdmin()) return new ResponseEntity<>(portfolioService.getAllPortfolio(), HttpStatus.OK);
-           return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if(authService.isAdmin()) return new ResponseEntity<>(portfolioService.getAllPortfolio(), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 

@@ -1,6 +1,8 @@
 package io.turntabl.tsops.OrderProcessing.service;
 
 import io.turntabl.tsops.ClientConnectivity.entity.User;
+import io.turntabl.tsops.ClientConnectivity.exception.OrderNotFoundException;
+import io.turntabl.tsops.ClientConnectivity.exception.OrderNotOpenException;
 import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.OrderProcessing.dto.OrderDto;
 import io.turntabl.tsops.OrderProcessing.entity.Order;
@@ -8,12 +10,12 @@ import io.turntabl.tsops.OrderProcessing.entity.OrderStatus;
 import io.turntabl.tsops.OrderProcessing.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -35,7 +37,7 @@ public class OrderService {
     ExchangeConnectivityService exchangeConnectivityService;
 
     public List<Order> getAllOrder() {
-       return orderRepository.findAll();
+        return orderRepository.findAll();
     }
 
     public List<Order> getUserOrder() {
@@ -46,10 +48,7 @@ public class OrderService {
     public void createOrder(OrderDto orderDto, Long portfolioID) {
         Order order = new Order();
         User user = authService.getCurrentUser();
-        order.setProduct(orderDto.getProduct());
-        order.setQuantity(orderDto.getQuantity());
-        order.setPrice(orderDto.getPrice());
-        order.setSide(orderDto.getSide());
+        orderDto.setFromDto(order, orderDto);
         order.setStatus(OrderStatus.CREATED);
         order.setUser(user);
         order.setPortfolioID(portfolioID);
@@ -58,24 +57,26 @@ public class OrderService {
         orderValidationService.validateOrder(orderDto, order);
     }
 
-    public void updateOrder(OrderDto newOrderDto, Long orderID){
-        Order order = orderRepository.getById(orderID);
-
-        if(order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING)) {
-            exchangeConnectivityService.updateOrderOnExchange(newOrderDto, order);
-        } else {
-            log.info("Order you want to cancel is not open");
-        }
+    public void updateOrder(OrderDto newOrderDto, Long orderID) {
+        checkAndUpdateOrDeleteOrder(orderID, exchangeConnectivityService, newOrderDto);
     }
 
-    public void deleteOrder(Long orderID){
-        Order order = orderRepository.getById(orderID);
-
-        if(order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING)) {
-            exchangeConnectivityService.cancelOrderOnExchange(order);
-        } else {
-            log.info("Order you want to cancel is not open");
-        }
+    public void deleteOrder(Long orderID) {
+        checkAndUpdateOrDeleteOrder(orderID, exchangeConnectivityService, null);
     }
 
+    private void checkAndUpdateOrDeleteOrder(Long orderID, ExchangeConnectivityService exchange, OrderDto newOrderDto) {
+        Optional<Order> _order = orderRepository.findById(orderID);
+
+        Order order = _order.orElseThrow(() -> {
+            throw new OrderNotFoundException();
+        });
+
+        if (order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING) || order.getStatus().equals(OrderStatus.UPDATED)) {
+            if (newOrderDto != null) exchange.updateOrderOnExchange(newOrderDto, order);
+            else exchange.cancelOrderOnExchange(order);
+        } else {
+            throw new OrderNotOpenException();
+        }
+    }
 }

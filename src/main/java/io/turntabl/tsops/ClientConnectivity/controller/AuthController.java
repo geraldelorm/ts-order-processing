@@ -4,6 +4,7 @@ import io.turntabl.tsops.ClientConnectivity.dto.AuthenticationResponse;
 import io.turntabl.tsops.ClientConnectivity.dto.LoginRequest;
 import io.turntabl.tsops.ClientConnectivity.dto.RefreshTokenRequest;
 import io.turntabl.tsops.ClientConnectivity.dto.RegisterRequest;
+import io.turntabl.tsops.ClientConnectivity.exception.ResponseHandler;
 import io.turntabl.tsops.ClientConnectivity.service.AuthService;
 import io.turntabl.tsops.ClientConnectivity.service.RefreshTokenService;
 import lombok.AllArgsConstructor;
@@ -25,9 +26,13 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<Object> signup(@RequestBody @Valid RegisterRequest registerRequest) {
         authService.signup(registerRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseHandler
+                .builder()
+                .status(HttpStatus.CREATED)
+                .message("Registration successful")
+                .build();
     }
 
     @PostMapping("/login")
