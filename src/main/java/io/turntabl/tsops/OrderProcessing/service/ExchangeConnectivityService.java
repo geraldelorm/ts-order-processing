@@ -74,8 +74,8 @@ public class ExchangeConnectivityService {
             orderRepository.save(order);
 
 
-            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
-//            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
+//            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
 
         } catch (HttpServerErrorException e){
             order.setStatus(OrderStatus.FAILED);
@@ -196,8 +196,10 @@ public class ExchangeConnectivityService {
 
                 if (order.getSide().equals("BUY")){
                     product.setQuantity(product.getQuantity() + (order.getQuantity()));
+                    product.setValue(product.getValue() + (order.getPrice() * order.getQuantity()));
                 } else {
                     product.setQuantity(product.getQuantity() - (order.getQuantity()));
+                    product.setValue(product.getValue() - (order.getPrice() * order.getQuantity()));
                 }
                 productRepository.save(product);
                 log.info("Product updated");
