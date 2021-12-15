@@ -122,10 +122,6 @@ public class OrderValidationService {
             order.setStatus(OrderStatus.FAILED);
             orderRepository.save(order);
         }
-
-
-            //TODO
-            // DECIDE WHICH EXCHANGE TO SEND TO BASED ON ORDER BOOK
     }
 
     //Validation Methods
@@ -187,13 +183,13 @@ public class OrderValidationService {
                 .findFirst().get();
     }
 
-    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
-        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
-
-    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
-        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
+//        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
+//
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
+//        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
 }
