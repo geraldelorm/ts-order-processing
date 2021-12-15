@@ -74,7 +74,7 @@ public class ExchangeConnectivityService {
             orderRepository.save(order);
 
 
-//            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
+            checkOrderStatusOnExchange(orderIDFromExchange, order, exchange);
 //            jmsTemplate.convertAndSend("orderIDQueue", order.getId().toString());
 
         } catch (HttpServerErrorException e){
