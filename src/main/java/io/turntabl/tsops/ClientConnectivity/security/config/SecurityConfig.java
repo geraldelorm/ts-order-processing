@@ -30,7 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/v1/auth/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/portfolio/**").permitAll()
                 .anyRequest().authenticated();
         httpSecurity.addFilterBefore(jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
