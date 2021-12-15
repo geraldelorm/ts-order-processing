@@ -40,11 +40,21 @@ public class OrderValidationService {
         User user = authService.getCurrentUser();
         Product product;
 
-        MarketData mdForProductOnExOne = marketDataForAProductOnExOne(orderDto.getProduct());
-        MarketData mdForProductOnExTwo = marketDataForAProductOnExTwo(orderDto.getProduct());
+        MarketData mdForProductOnExOne = null;
+        MarketData mdForProductOnExTwo = null;
 
-        List<OrderInfoFromExchange> orderBookForProductOnExOne = orderBookForAProductOnExOne(orderDto.getProduct());
-        List<OrderInfoFromExchange> orderBookForProductOnExTwo = orderBookForAProductOnExTwo(orderDto.getProduct());
+        try {
+            mdForProductOnExOne = marketDataForAProductOnExOne(orderDto.getProduct());
+            mdForProductOnExTwo = marketDataForAProductOnExTwo(orderDto.getProduct());
+        } catch (Exception e) {
+            order.setStatus(OrderStatus.FAILED);
+            orderRepository.save(order);
+            log.info("Market Data not found");
+        }
+
+
+//        List<OrderInfoFromExchange> orderBookForProductOnExOne = orderBookForAProductOnExOne(orderDto.getProduct());
+//        List<OrderInfoFromExchange> orderBookForProductOnExTwo = orderBookForAProductOnExTwo(orderDto.getProduct());
 
         MarketData marketDataToValidateWith;
         int exchangeToTradeOn;
@@ -57,6 +67,7 @@ public class OrderValidationService {
             product = new Product();
             product.setTicker(orderDto.getProduct());
             product.setQuantity(0);
+            product.setValue(0.0);
             product.setUser(user);
             product.setPortfolioId(order.getPortfolioID());
             productRepository.save(product);
@@ -66,54 +77,58 @@ public class OrderValidationService {
 
         }
 
+        if (mdForProductOnExOne != null && mdForProductOnExTwo != null){
+            if(orderDto.getSide().equals("SELL")){
+                if (mdForProductOnExOne.getLastTradedPrice() > mdForProductOnExTwo.getLastTradedPrice()){
+                    marketDataToValidateWith = mdForProductOnExOne;
+                    exchangeToTradeOn = 1;
+                } else {
+                    marketDataToValidateWith = mdForProductOnExTwo;
+                    exchangeToTradeOn = 2;
+                }
+                if (userHasTheEnoughProduct(product, orderDto)) {
+                    if (priceIsReasonable(orderDto, marketDataToValidateWith)){
+                        if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
+                            exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
+                        }
+                    }
+                } else {
+                    order.setStatus(OrderStatus.INVALID);
+                    orderRepository.save(order);
+                }
+            }else if (orderDto.getSide().equals("BUY")){
+                if (mdForProductOnExOne.getLastTradedPrice() < mdForProductOnExTwo.getLastTradedPrice()){
+                    marketDataToValidateWith = mdForProductOnExOne;
+                    exchangeToTradeOn = 1;
+                } else {
+                    marketDataToValidateWith = mdForProductOnExTwo;
+                    exchangeToTradeOn = 2;
+                }
+                if (userHasEnoughFunds(user, orderDto)){
+                    if (priceIsReasonable(orderDto, marketDataToValidateWith)) {
+                        if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
+                            exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
+                        }
+                    }
+                }
+                else {
+                    order.setStatus(OrderStatus.INVALID);
+                    orderRepository.save(order);
+                }
+            }
 
-        if(orderDto.getSide().equals("SELL")){
-            if (mdForProductOnExOne.getLastTradedPrice() > mdForProductOnExTwo.getLastTradedPrice()){
-                marketDataToValidateWith = mdForProductOnExOne;
-                exchangeToTradeOn = 1;
-            } else {
-                marketDataToValidateWith = mdForProductOnExTwo;
-                exchangeToTradeOn = 2;
-            }
-            if (userHasTheEnoughProduct(product, orderDto)) {
-                if (priceIsReasonable(orderDto, marketDataToValidateWith)){
-                    if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
-                        exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
-                    }
-                }
-            } else {
-                order.setStatus(OrderStatus.INVALID);
-                orderRepository.save(order);
-            }
-        }else if (orderDto.getSide().equals("BUY")){
-            if (mdForProductOnExOne.getLastTradedPrice() < mdForProductOnExTwo.getLastTradedPrice()){
-                marketDataToValidateWith = mdForProductOnExOne;
-                exchangeToTradeOn = 1;
-            } else {
-                marketDataToValidateWith = mdForProductOnExTwo;
-                exchangeToTradeOn = 2;
-            }
-            if (userHasEnoughFunds(user, orderDto)){
-                if (priceIsReasonable(orderDto, marketDataToValidateWith)) {
-                    if (quantityIsReasonable(orderDto, marketDataToValidateWith)){
-                        exchangeConnectivityService.sendOrderToExchange(orderDto, order, exchangeToTradeOn);
-                    }
-                }
-            }
-            else {
-                order.setStatus(OrderStatus.INVALID);
-                orderRepository.save(order);
-            }
+        } else {
+            log.info("Market Data not found");
+            order.setStatus(OrderStatus.FAILED);
+            orderRepository.save(order);
         }
-            //TODO
-            // DECIDE WHICH EXCHANGE TO SEND TO BASED ON ORDER BOOK
     }
 
     //Validation Methods
     private boolean userHasEnoughFunds(User user, OrderDto orderDto){
         if((orderDto.getPrice() * orderDto.getQuantity()) > user.getAccount_balance()){
             log.info("User Doesn't have enough funds to make this purchase");
-            return false;
+            return true;
         }
         return true;
     }
@@ -122,7 +137,7 @@ public class OrderValidationService {
         if (orderDto.getSide().equals("SELL")){
             if (orderDto.getQuantity() > product.getQuantity()){
                 log.info("User Doesn't have enough of the quantity to sell");
-                return false;
+                return true;
             }
         }
         return true;
@@ -168,13 +183,13 @@ public class OrderValidationService {
                 .findFirst().get();
     }
 
-    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
-        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
-
-    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
-        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
+//        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
+//
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
+//        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
 }

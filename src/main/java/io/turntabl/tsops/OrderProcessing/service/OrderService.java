@@ -72,7 +72,7 @@ public class OrderService {
             throw new OrderNotFoundException();
         });
 
-        if (order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING)) {
+        if (order.getStatus().equals(OrderStatus.IN_PROGRESS) || order.getStatus().equals(OrderStatus.PENDING) || order.getStatus().equals(OrderStatus.UPDATED)) {
             if (newOrderDto != null) exchange.updateOrderOnExchange(newOrderDto, order);
             else exchange.cancelOrderOnExchange(order);
         } else {
