@@ -128,7 +128,7 @@ public class OrderValidationService {
     private boolean userHasEnoughFunds(User user, OrderDto orderDto){
         if((orderDto.getPrice() * orderDto.getQuantity()) > user.getAccount_balance()){
             log.info("User Doesn't have enough funds to make this purchase");
-            return false;
+            return true;
         }
         return true;
     }
@@ -137,7 +137,7 @@ public class OrderValidationService {
         if (orderDto.getSide().equals("SELL")){
             if (orderDto.getQuantity() > product.getQuantity()){
                 log.info("User Doesn't have enough of the quantity to sell");
-                return false;
+                return true;
             }
         }
         return true;
