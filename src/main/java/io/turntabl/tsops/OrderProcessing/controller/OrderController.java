@@ -93,17 +93,32 @@ public class OrderController {
         return ResponseHandler
                 .builder()
                 .status(HttpStatus.ACCEPTED)
-                .message("Order is created")
+                .message("Order is updated")
                 .build();
     }
 
     @DeleteMapping(path = "/delete/{orderID}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long orderID) {
-        if (authService.isClient()) {
+    public ResponseEntity<Object> deleteOrder(@PathVariable Long orderID) {
+        if (!authService.isClient())
+            return ResponseHandler
+                    .builder()
+                    .status(HttpStatus.FORBIDDEN)
+                    .message("Not authorized")
+                    .build();
+
+        try {
             orderService.deleteOrder(orderID);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (OrderNotFoundException e) {
+            throw new OrderNotFoundException();
+        } catch (OrderNotOpenException e) {
+            throw new OrderNotOpenException();
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
+        return ResponseHandler
+                .builder()
+                .status(HttpStatus.ACCEPTED)
+                .message("Order is deleted")
+                .build();
     }
 
     //TODO
