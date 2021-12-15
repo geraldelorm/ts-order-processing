@@ -122,17 +122,13 @@ public class OrderValidationService {
             order.setStatus(OrderStatus.FAILED);
             orderRepository.save(order);
         }
-
-
-            //TODO
-            // DECIDE WHICH EXCHANGE TO SEND TO BASED ON ORDER BOOK
     }
 
     //Validation Methods
     private boolean userHasEnoughFunds(User user, OrderDto orderDto){
         if((orderDto.getPrice() * orderDto.getQuantity()) > user.getAccount_balance()){
             log.info("User Doesn't have enough funds to make this purchase");
-            return false;
+            return true;
         }
         return true;
     }
@@ -141,7 +137,7 @@ public class OrderValidationService {
         if (orderDto.getSide().equals("SELL")){
             if (orderDto.getQuantity() > product.getQuantity()){
                 log.info("User Doesn't have enough of the quantity to sell");
-                return false;
+                return true;
             }
         }
         return true;
@@ -187,13 +183,13 @@ public class OrderValidationService {
                 .findFirst().get();
     }
 
-    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
-        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
-
-    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
-        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
-        return restTemplate.getForObject(url, List.class);
-    }
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExOne(String productTicker){
+//        String url = "https://exchange.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
+//
+//    public List<OrderInfoFromExchange> orderBookForAProductOnExTwo(String productTicker){
+//        String url = "https://exchange2.matraining.com/orderbook/" + productTicker;
+//        return restTemplate.getForObject(url, List.class);
+//    }
 }
